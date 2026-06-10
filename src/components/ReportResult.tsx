@@ -1,0 +1,503 @@
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
+import {
+  Sparkles, 
+  CheckCircle2, 
+  RefreshCw, 
+  ChevronDown, 
+  ChevronUp, 
+  BookOpen, 
+  Clock, 
+  Calendar,
+  Volume2
+} from 'lucide-react';
+import { EnglishLevelKey } from '../types';
+import { QUESTIONS, LEVEL_DETAILS } from '../data/questions';
+import MascotLion from './MascotLion';
+import BookingForm from './BookingForm';
+
+interface ReportResultProps {
+  responses: { questionId: number; selectedOption: number; isCorrect: boolean }[];
+  onRestart: () => void;
+}
+
+export default function ReportResult({
+  responses,
+  onRestart,
+}: ReportResultProps) {
+  const [showAnswerReview, setShowAnswerReview] = useState(false);
+  const [bookingType, setBookingType] = useState<'info' | 'consultation'>('info');
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // 1. Calculate weighted difficulty score
+  const scoreStats = useMemo(() => {
+    let totalPoints = 0;
+    let earnedPoints = 0;
+    let correctCount = 0;
+
+    responses.forEach((resp) => {
+      const q = QUESTIONS.find((item) => item.id === resp.questionId);
+      if (!q) return;
+
+      let weight = 1;
+      if (q.level === 'A1') weight = 1;
+      else if (q.level === 'A2') weight = 2;
+      else if (q.level === 'B1') weight = 3;
+      else if (q.level === 'B2') weight = 4;
+      else if (q.level === 'C1') weight = 5;
+      else if (q.level === 'C2') weight = 6;
+
+      totalPoints += weight;
+      if (resp.isCorrect) {
+        earnedPoints += weight;
+        correctCount += 1;
+      }
+    });
+
+    // Match CEFR level key based on points thresholds
+    let levelKey: EnglishLevelKey = 'B1'; // Default / base
+    if (earnedPoints >= 61) levelKey = 'C2';
+    else if (earnedPoints >= 49) levelKey = 'C1';
+    else if (earnedPoints >= 33) levelKey = 'B2';
+    else if (earnedPoints >= 19) levelKey = 'B1';
+    else if (earnedPoints >= 9) levelKey = 'A2';
+    else levelKey = 'A1';
+
+    return {
+      earnedPoints,
+      totalPoints,
+      percentage: Math.round((earnedPoints / totalPoints) * 100),
+      correctCount,
+      levelKey,
+    };
+  }, [responses]);
+
+  const levelInfo = useMemo(() => {
+    return LEVEL_DETAILS[scoreStats.levelKey];
+  }, [scoreStats.levelKey]);
+
+  // Horizontal CEFR levels
+  const cefrLevels: { key: EnglishLevelKey; label: string }[] = [
+    { key: 'A1', label: 'Principiante' },
+    { key: 'A2', label: 'Elemental' },
+    { key: 'B1', label: 'Intermedio' },
+    { key: 'B2', label: 'Intermedio Alto' },
+    { key: 'C1', label: 'Avanzado' },
+    { key: 'C2', label: 'Dominio' },
+  ];
+
+  const getShieldSubtitle = (level: string) => {
+    switch (level) {
+      case 'A1': return 'PRINCIPIANTE';
+      case 'A2': return 'ELEMENTAL';
+      case 'B1': return 'INTERMEDIO';
+      case 'B2': return 'INT. ALTO';
+      case 'C1': return 'AVANZADO';
+      case 'C2': return 'DOMINIO';
+      default: return 'INTERMEDIO';
+    }
+  };
+
+  // 2. Confetti Effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (canvas) {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      color: string;
+      speedX: number;
+      speedY: number;
+      rotation: number;
+      rotationSpeed: number;
+
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * -height - 20;
+        this.size = Math.random() * 8 + 6;
+        const colors = ['#00D8FF', '#004BFF', '#6A11FF', '#FFC83D', '#FFFFFF', '#FF0055'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.speedX = Math.random() * 4 - 2;
+        this.speedY = Math.random() * 5 + 4;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 3 - 1.5;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.rotation += this.rotationSpeed;
+
+        if (this.y > height) {
+          this.y = -20;
+          this.x = Math.random() * width;
+          this.speedY = Math.random() * 5 + 4;
+        }
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 4, this.size, this.size / 2);
+        ctx.restore();
+      }
+    }
+
+    const particles: Particle[] = Array.from({ length: 80 }, () => new Particle());
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach((p) => {
+        p.update();
+        p.draw();
+      });
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const timer = setTimeout(() => {
+      cancelAnimationFrame(animationFrameId);
+      ctx.clearRect(0, 0, width, height);
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const handleOpenBooking = (type: 'info' | 'consultation') => {
+    setBookingType(type);
+    setIsBookingOpen(true);
+  };
+
+  return (
+    <div className="relative min-h-[calc(100vh-80px)] py-10 px-4 md:px-8 bg-[#020925] bg-union-jack-grid overflow-hidden text-white">
+      
+      {/* Confetti Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 pointer-events-none z-50 mix-blend-screen"
+      />
+
+      {/* Background spotlights */}
+      <div className="absolute top-[10%] right-[10%] w-[45vw] h-[45vw] rounded-full bg-[#1736D1]/15 blur-[130px] pointer-events-none -z-10" />
+      <div className="absolute bottom-[10%] left-[10%] w-[45vw] h-[45vw] rounded-full bg-[#4A2DCC]/15 blur-[130px] pointer-events-none -z-10" />
+
+      <div className="w-full max-w-5xl mx-auto space-y-8 relative z-10">
+        
+        {/* MAIN RESULTS CONTAINER (Matching exact structure in screenshot) */}
+        <div className="bg-[#05144b]/50 backdrop-blur-xl border border-white/10 rounded-[32px] p-6 md:p-8 shadow-[0_24px_50px_rgba(0,0,0,0.4)] space-y-8">
+          
+          {/* Top Banner / Celebration text */}
+          <div className="flex items-center gap-2 pb-4 border-b border-white/5">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+            </span>
+            <span className="text-xs font-mono font-bold text-green-400 uppercase tracking-widest">
+              ¡Evaluación completada!
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* LEFT SIDE: Level estimation & shield badge */}
+            <div className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
+              <div>
+                <p className="text-slate-300 text-sm font-sans font-bold uppercase tracking-wider">
+                  Tu nivel estimado es:
+                </p>
+              </div>
+
+              {/* Large Gold/Blue Shield Badge (Replaces basic text) */}
+              <div className="relative w-44 h-52 flex items-center justify-center filter drop-shadow-[0_15px_30px_rgba(10,46,158,0.45)] select-none">
+                <svg viewBox="0 0 100 120" className="w-full h-full fill-[#05144b] stroke-[#FFC83D] stroke-[3.5] drop-shadow-[0_0_15px_rgba(255,200,61,0.25)]">
+                  <path d="M 50 5 C 90 5, 95 10, 95 50 C 95 85, 75 110, 50 118 C 25 110, 5 85, 5 50 C 5 10, 10 5, 50 5 Z" />
+                  <path d="M 50 12 C 84 12, 88 16, 88 50 C 88 80, 71 101, 50 109 C 29 101, 12 80, 12 50 C 12 16, 16 12, 50 12 Z" fill="none" stroke="#FFC83D" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
+                </svg>
+                
+                <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
+                  <span className="text-5xl font-sans font-black text-white tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                    {scoreStats.levelKey}
+                  </span>
+                  <span className="text-[10px] font-mono font-black text-[#FFC83D] uppercase tracking-widest mt-2 px-3 py-1 bg-[#020925]/70 rounded-full border border-[#FFC83D]/25">
+                    {getShieldSubtitle(scoreStats.levelKey)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Level Scale Timeline (A1 -> C2) */}
+              <div className="w-full space-y-3 pt-4">
+                <div className="grid grid-cols-6 gap-1 relative text-center">
+                  {cefrLevels.map((lvl) => {
+                    const isCurrent = lvl.key === scoreStats.levelKey;
+                    return (
+                      <div key={lvl.key} className="flex flex-col items-center">
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center font-sans font-black text-xs transition-all duration-300 relative ${
+                            isCurrent
+                              ? 'bg-gradient-to-r from-[#FFC83D] to-[#E08B00] text-[#020925] border-2 border-white scale-115 shadow-[0_0_15px_rgba(255,200,61,0.5)] z-10'
+                              : 'bg-white/5 border border-white/5 text-slate-500'
+                          }`}
+                        >
+                          {lvl.key}
+                          {isCurrent && (
+                            <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#FFC83D] rotate-45" />
+                          )}
+                        </div>
+                        <span className={`text-[8px] font-bold mt-2 font-sans leading-none ${isCurrent ? 'text-[#00d2ff]' : 'text-slate-500'}`}>
+                          {lvl.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* CENTER: Celebrating 3D mascot lion */}
+            <div className="lg:col-span-3 flex justify-center items-center">
+              <img 
+                src="/assets/images/lion_result.png" 
+                alt="Leo el León celebrando" 
+                className="w-48 md:w-56 h-auto object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)] animate-float-slow select-none"
+              />
+            </div>
+
+            {/* RIGHT SIDE: Recommended Program card */}
+            <div className="lg:col-span-4 bg-[#020925]/60 border border-white/10 p-6 rounded-[24px] shadow-inner text-left flex flex-col justify-between h-full min-h-[320px]">
+              <div>
+                <p className="text-[10px] font-mono font-bold text-[#FFC83D] uppercase tracking-widest block mb-2">
+                  Programa recomendado
+                </p>
+                <h3 className="text-xl md:text-2xl font-sans font-black text-white tracking-tight leading-tight uppercase">
+                  {levelInfo.recommendedProgram.name}
+                </h3>
+                <p className="text-xs text-slate-300 font-sans mt-2 leading-relaxed font-medium">
+                  Ideal para desarrollar tus habilidades y alcanzar fluidez en situaciones reales.
+                </p>
+
+                {/* Specific 5 benefit checkmarks list */}
+                <div className="mt-5 space-y-2.5">
+                  {['Conversación', 'Comprensión auditiva', 'Gramática', 'Vocabulario', 'Fluidez y confianza'].map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <div className="w-5 h-5 bg-[#0A2E9E]/20 text-[#00d2ff] rounded-lg border border-[#00d2ff]/30 flex items-center justify-center shrink-0">
+                        <span className="text-[10px] font-black">✓</span>
+                      </div>
+                      <span className="text-xs font-sans font-bold text-slate-200">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 3D Backpack floating at the bottom right of card */}
+              <div className="flex justify-end mt-4">
+                <img 
+                  src="/assets/images/backpack.png" 
+                  alt="British House Mochila" 
+                  className="w-14 h-auto object-contain drop-shadow-md animate-float-medium"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* BOTTOM ACTION CONVERSION BAR (Matching screenshot bottom footer segment) */}
+        <div className="bg-[#05144b]/80 border border-white/10 p-5 rounded-[28px] flex flex-col lg:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="flex items-center gap-4 text-left">
+            <div className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center bg-white/5 shrink-0 text-[#00d2ff]">
+              <Volume2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-sans font-black uppercase text-white tracking-wider">
+                ¿Listo para llevar tu inglés al siguiente nivel?
+              </h4>
+              <p className="text-xs text-slate-300 font-sans font-medium mt-0.5">
+                Nuestro equipo está listo para ayudarte en todo momento.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+            {/* Primary Yellow CTA button */}
+            <button
+              onClick={() => handleOpenBooking('info')}
+              className="py-3.5 px-6 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl shadow-[0_0_20px_rgba(255,200,61,0.3)] hover:shadow-[0_0_30px_rgba(255,200,61,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-xs"
+              id="cta-get-personalized-info"
+            >
+              <span>OBTENER INFORMACIÓN PERSONALIZADA</span>
+            </button>
+
+            {/* Secondary WhatsApp purple button */}
+            <button
+              onClick={() => handleOpenBooking('consultation')}
+              className="py-3.5 px-6 bg-[#120b36] hover:bg-[#120b36]/80 text-white font-sans font-bold rounded-xl border border-white/15 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-xs"
+            >
+              {/* Green WhatsApp fill icon */}
+              <svg className="w-4 h-4 text-green-400 fill-current" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.536.002 10.04-4.501 10.043-10.04 0-2.684-1.044-5.207-2.943-7.107C16.425 1.558 13.902.515 11.217.515 5.676.515 1.171 5.018 1.168 10.559c-.001 1.558.424 3.085 1.233 4.453l-1.02 3.722 3.82-1.002c1.32.72 2.766 1.098 4.446 1.101zM17.91 14.93c-.274-.137-1.62-.8-1.87-.892-.252-.093-.437-.137-.62.137-.183.275-.71.892-.87 1.076-.16.183-.32.206-.594.07-1.63-.8-2.73-1.38-3.82-2.32-.27-.24-.51-.49-.72-.74-.28-.32-.03-.5.12-.65.13-.13.27-.32.41-.48.06-.07.13-.15.19-.22.08-.1.13-.19.19-.29.13-.27.07-.5-.03-.71-.1-.21-.62-1.49-.85-2.04-.22-.53-.47-.46-.65-.47-.16-.01-.35-.01-.54-.01-.19 0-.5.07-.76.35-.38.41-1.46 1.42-1.46 3.47 0 2.05 1.49 4.03 1.7 4.31.21.28 2.93 4.47 7.09 6.27.99.43 1.76.69 2.37.88.99.31 1.9.27 2.62.16.8-.12 2.47-1.01 2.82-1.99.35-.98.35-1.83.25-2.01-.11-.18-.41-.27-.68-.41z"/>
+              </svg>
+              <span>HABLAR CON UN ASESOR</span>
+            </button>
+          </div>
+        </div>
+
+        {/* DETAILS OF EXPLAINED ANSWERS ACCORDION */}
+        <div className="bg-[#05144b]/50 backdrop-blur-md rounded-3xl border border-white/10 shadow-lg overflow-hidden text-left">
+          <button
+            onClick={() => setShowAnswerReview(!showAnswerReview)}
+            className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-all duration-200 cursor-pointer"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#0A2E9E]/20 text-[#FFC83D] border border-[#FFC83D]/30 flex items-center justify-center">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-sans font-black uppercase tracking-wider text-white">
+                  Revisar Respuestas y Consejos Académicos
+                </h3>
+                <p className="text-xs text-slate-400 font-sans mt-0.5 font-medium">
+                  Revisa cuáles respondiste bien y descubre el análisis gramatical detallado de Leo
+                </p>
+              </div>
+            </div>
+
+            <div className="text-slate-400">
+              {showAnswerReview ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </div>
+          </button>
+
+          {showAnswerReview && (
+            <div className="border-t border-white/10 p-6 space-y-6 bg-[#020925]/35">
+              {QUESTIONS.map((question, index) => {
+                const userResp = responses.find((r) => r.questionId === question.id);
+                const userSelectedIdx = userResp ? userResp.selectedOption : undefined;
+                const isCorrect = userResp ? userResp.isCorrect : false;
+
+                return (
+                  <div
+                    key={question.id}
+                    className="bg-[#05144b]/80 p-5 rounded-[24px] border border-white/5 shadow-inner space-y-4 text-left"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold text-white bg-[#0A2E9E] border border-white/20 px-3 py-1 rounded">
+                          P{index + 1}
+                        </span>
+                        <span className="text-[10px] uppercase font-mono font-black text-slate-400 tracking-wider">
+                          Nivel {question.level} • {question.category}
+                        </span>
+                      </div>
+
+                      {userSelectedIdx !== undefined ? (
+                        isCorrect ? (
+                          <span className="text-xs font-sans font-black text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-lg border border-emerald-400/30">
+                            ✓ CORRECTO
+                          </span>
+                        ) : (
+                          <span className="text-xs font-sans font-black text-red-400 bg-red-400/10 px-3 py-1 rounded-lg border border-red-400/30">
+                            ✕ INCORRECTO
+                          </span>
+                        )
+                      ) : (
+                        <span className="text-xs font-mono font-bold text-slate-400">
+                          SIN RESPONDER
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="text-sm md:text-base font-sans font-black text-white leading-relaxed">
+                      {question.text}
+                    </h4>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {question.options.map((opt, optIdx) => {
+                        const isSelected = userSelectedIdx === optIdx;
+                        const isRightAnswer = question.correctAnswer === optIdx;
+
+                        let cardStyle = 'border-white/5 bg-[#020925]/30 text-slate-350';
+                        if (isRightAnswer) {
+                          cardStyle = 'border-emerald-400/50 bg-[#10b981]/15 text-white font-extrabold';
+                        } else if (isSelected && !isCorrect) {
+                          cardStyle = 'border-red-400/50 bg-[#ef4444]/15 text-white';
+                        }
+
+                        return (
+                          <div
+                            key={optIdx}
+                            className={`p-3.5 rounded-xl border text-xs flex items-center gap-2.5 ${cardStyle}`}
+                          >
+                            <div
+                              className={`w-4 h-4 rounded-full border flex items-center justify-center text-[10px] font-black ${
+                                isRightAnswer
+                                  ? 'bg-emerald-500 border-emerald-500 text-[#020925]'
+                                  : isSelected && !isCorrect
+                                  ? 'bg-red-500 border-red-500 text-white'
+                                  : 'border-white/20 bg-white/5'
+                              }`}
+                            >
+                              {isRightAnswer ? '✓' : isSelected && !isCorrect ? '✕' : ''}
+                            </div>
+                            <span className="truncate">{opt}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Speech bubble style explanations */}
+                    <div className="bg-[#0A2E9E]/10 p-4 rounded-xl border border-[#FFC83D]/20 text-xs text-white/90 flex gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-tr from-[#004BFF] to-[#0A2E9E] rounded-lg flex items-center justify-center font-sans font-black text-[10px] text-white shrink-0 shadow-md">
+                        LEO
+                      </div>
+                      <div className="leading-relaxed">
+                        <span className="font-mono font-black text-[10px] text-[#FFC83D] uppercase tracking-wider block">
+                          Consejo académico de Leo:
+                        </span>
+                        <p className="mt-1 text-slate-300 font-sans font-medium">{question.explanation}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* LEAD-CAPTURE CONTACT GATE DIALOG */}
+      <BookingForm
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        initialType={bookingType}
+        estimatedLevel={scoreStats.levelKey}
+        recommendedProgram={levelInfo.recommendedProgram.name}
+      />
+    </div>
+  );
+}

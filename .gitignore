@@ -3,9 +3,13 @@ node_modules/
 .pnp
 .pnp.js
 
-# Next.js build output
+# Next.js & Vite build output
 .next/
 out/
+dist/
+dist-ssr/
+*.local
+
 
 # Environment variables
 .env

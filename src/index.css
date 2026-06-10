@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cabinet+Grotesk:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cabinet Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-bh-blue: #0A2E9E;
+  --color-deep-blue: #1736D1;
+  --color-royal-purple: #4A2DCC;
+  --color-accent-yellow: #FFC83D;
+  --color-bh-dark: #020925;
+  --color-bh-card: #05144b;
+}
+
+/* Custom scrollbars and styling elements to match the professional brand identity */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020925;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0A2E9E;
+  border-radius: 99px;
+  border: 2px solid #020925;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1736D1;
+}
+
+/* Vibrant and Premium British House Backdrop Glows */
+.bg-gaming-dark {
+  background: radial-gradient(circle at 50% 0%, #0A2E9E 0%, #05144b 50%, #020925 100%);
+}
+
+.bg-gaming-mesh {
+  background-color: #020925;
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(74, 45, 204, 0.25) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(10, 46, 158, 0.3) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(23, 54, 209, 0.2) 0px, transparent 50%),
+    radial-gradient(at 80% 90%, rgba(74, 45, 204, 0.2) 0px, transparent 50%);
+}
+
+/* Subtle British pattern textures overlayed in background CSS */
+.bg-union-jack-grid {
+  background-size: 80px 80px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Gaming glow elements - aligned with Instagram style, not excessive neon */
+.neon-glow-primary {
+  box-shadow: 0 0 25px rgba(10, 46, 158, 0.35);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 25px rgba(74, 45, 204, 0.35);
+}
+
+.neon-glow-yellow {
+  box-shadow: 0 0 30px rgba(255, 200, 61, 0.45);
+}
+
+.text-glow-yellow {
+  text-shadow: 0 0 15px rgba(255, 200, 61, 0.35);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-2deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.03);
+  }
+}
+
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-reverse 6s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 5s ease-in-out infinite;
+}
