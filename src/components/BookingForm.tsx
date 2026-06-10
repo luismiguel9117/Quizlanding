@@ -357,7 +357,7 @@ export default function BookingForm({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-4.5 mt-4 bg-gradient-to-r from-[#FFC83D] via-[#ffe08a] to-[#FFC83D] text-[#020925] font-sans font-black tracking-widest uppercase rounded-xl shadow-[0_0_20px_rgba(255,200,61,0.35)] hover:shadow-[0_0_30px_rgba(255,200,61,0.55)] cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs"
+                      className="w-full py-4.5 mt-4 bg-gradient-to-r from-[#FFC83D] via-[#ffe08a] to-[#FFC83D] text-[#020925] font-sans font-black tracking-widest uppercase rounded-xl shadow-[0_0_20px_rgba(255,200,61,0.35)] hover:shadow-[0_0_30px_rgba(255,200,61,0.55)] cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs animate-shine"
                     >
                       {isSubmitting ? (
                         <>

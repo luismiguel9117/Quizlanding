@@ -347,7 +347,7 @@ export default function ReportResult({
             {/* Primary Yellow CTA button */}
             <button
               onClick={() => handleOpenBooking('info')}
-              className="py-3.5 px-6 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl shadow-[0_0_20px_rgba(255,200,61,0.3)] hover:shadow-[0_0_30px_rgba(255,200,61,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-xs"
+              className="py-3.5 px-6 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl shadow-[0_0_20px_rgba(255,200,61,0.3)] hover:shadow-[0_0_30px_rgba(255,200,61,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-xs animate-shine"
               id="cta-get-personalized-info"
             >
               <span>OBTENER INFORMACIÓN PERSONALIZADA</span>

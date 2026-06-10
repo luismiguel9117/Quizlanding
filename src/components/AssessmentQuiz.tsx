@@ -23,6 +23,18 @@ export default function AssessmentQuiz({
   // Real countdown timer starting at 5:00 minutes (300 seconds)
   const [timeLeft, setTimeLeft] = useState(300);
 
+  // Card Spotlight Mouse Coordinates & Hover State Tracking (Aceternity UI)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [mouseCoords, setMouseCoords] = useState<Record<number, { x: number; y: number }>>({});
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>, idx: number) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMouseCoords((prev) => ({
+      ...prev,
+      [idx]: { x: e.clientX - rect.left, y: e.clientY - rect.top },
+    }));
+  };
+
   useEffect(() => {
     if (!hasStarted || isFinishing) return;
     const timer = setInterval(() => {
@@ -193,7 +205,7 @@ export default function AssessmentQuiz({
             
             <button
               onClick={() => setHasStarted(true)}
-              className="group w-full flex items-center justify-center gap-2 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl py-4 transition-all duration-300 shadow-[0_0_20px_rgba(255,200,61,0.2)] hover:shadow-[0_0_30px_rgba(255,200,61,0.4)] cursor-pointer text-sm"
+              className="group w-full flex items-center justify-center gap-2 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl py-4 transition-all duration-300 shadow-[0_0_20px_rgba(255,200,61,0.2)] hover:shadow-[0_0_30px_rgba(255,200,61,0.4)] cursor-pointer text-sm animate-shine"
             >
               <span>EMPEZAR AHORA</span>
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 stroke-[3px]" />
@@ -366,6 +378,9 @@ export default function AssessmentQuiz({
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswers[currentQuestion.id] === idx;
                   const letter = String.fromCharCode(65 + idx); // A, B, C, D
+                  const isHovered = hoveredIndex === idx;
+                  const coords = mouseCoords[idx] || { x: 0, y: 0 };
+                  
                   return (
                     <motion.button
                       key={`${currentIndex}-${idx}`}
@@ -373,13 +388,30 @@ export default function AssessmentQuiz({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.04 }}
                       onClick={() => handleSelectOption(idx)}
-                      className={`group w-full text-left p-4.5 rounded-2xl border transition-all duration-200 relative cursor-pointer select-none ${
+                      onMouseMove={(e) => handleMouseMove(e, idx)}
+                      onMouseEnter={() => setHoveredIndex(idx)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                      style={{
+                        '--mouse-x': `${coords.x}px`,
+                        '--mouse-y': `${coords.y}px`,
+                      } as React.CSSProperties}
+                      className={`group w-full text-left p-4.5 rounded-2xl border transition-all duration-200 relative cursor-pointer select-none overflow-hidden ${
                         isSelected
                           ? 'bg-gradient-to-r from-[#0A2E9E] to-[#1736D1] border-[#00d2ff] shadow-[0_0_20px_rgba(0,210,255,0.4)]'
                           : 'bg-[#020925]/60 border-white/5 hover:border-[#1736D1]/40 hover:bg-[#05144b]/50 hover:translate-x-0.5'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      {/* Aceternity UI Spotlight Card Glow Background overlay */}
+                      {isHovered && !isSelected && (
+                        <div
+                          className="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-100 rounded-2xl"
+                          style={{
+                            background: `radial-gradient(100px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 210, 255, 0.12), transparent)`,
+                          }}
+                        />
+                      )}
+                      
+                      <div className="flex items-center gap-3 relative z-10">
                         {/* Selected Radio Indicator with Letter (A, B, C, D) */}
                         <div
                           className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 font-sans font-extrabold text-sm transition-all ${
@@ -440,7 +472,7 @@ export default function AssessmentQuiz({
             disabled={!isSelected}
             className={`flex items-center gap-2 px-8 py-4.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md ${
               isSelected
-                ? 'bg-gradient-to-r from-[#FFC83D] to-[#E08B00] text-[#020925] hover:scale-103 shadow-[0_0_20px_rgba(255,200,61,0.25)] cursor-pointer'
+                ? 'bg-gradient-to-r from-[#FFC83D] to-[#E08B00] text-[#020925] hover:scale-103 shadow-[0_0_20px_rgba(255,200,61,0.25)] cursor-pointer animate-shine'
                 : 'bg-white/5 text-slate-500 cursor-not-allowed shadow-none'
               }`}
           >

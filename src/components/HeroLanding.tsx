@@ -107,7 +107,7 @@ export default function HeroLanding({
             {/* COMENZAR EVALUACIÓN yellow button */}
             <button
               onClick={onStartAssessment}
-              className="group relative flex items-center justify-center gap-3 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl px-8 py-4.5 transition-all duration-300 shadow-[0_0_25px_rgba(255,200,61,0.25)] hover:shadow-[0_0_35px_rgba(255,200,61,0.45)] transform hover:-translate-y-1 cursor-pointer text-center text-sm"
+              className="group relative flex items-center justify-center gap-3 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl px-8 py-4.5 transition-all duration-300 shadow-[0_0_25px_rgba(255,200,61,0.25)] hover:shadow-[0_0_35px_rgba(255,200,61,0.45)] transform hover:-translate-y-1 cursor-pointer text-center text-sm animate-shine"
               id="cta-start-free-test"
             >
               <span>COMENZAR EVALUACIÓN</span>
