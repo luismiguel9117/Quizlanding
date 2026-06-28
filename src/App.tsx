@@ -262,7 +262,7 @@ export default function App() {
                   <img 
                     src="/assets/images/libro_reclamaciones.png" 
                     alt="Libro de Reclamaciones" 
-                    className="h-12 w-auto object-contain rounded" 
+                    className="h-16 md:h-20 w-auto object-contain rounded" 
                   />
                 </a>
               </div>
