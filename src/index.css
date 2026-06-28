@@ -21,31 +21,26 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #020925;
+  background: #004BDC;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0A2E9E;
+  background: #00B5F7;
   border-radius: 99px;
-  border: 2px solid #020925;
+  border: 2px solid #004BDC;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1736D1;
+  background: #FFC83D;
 }
 
 /* Vibrant and Premium British House Backdrop Glows */
 .bg-gaming-dark {
-  background: radial-gradient(circle at 50% 0%, #0A2E9E 0%, #05144b 50%, #020925 100%);
+  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%);
 }
 
 .bg-gaming-mesh {
-  background-color: #020925;
-  background-image: 
-    radial-gradient(at 10% 20%, rgba(74, 45, 204, 0.25) 0px, transparent 50%),
-    radial-gradient(at 90% 10%, rgba(10, 46, 158, 0.3) 0px, transparent 50%),
-    radial-gradient(at 50% 80%, rgba(23, 54, 209, 0.2) 0px, transparent 50%),
-    radial-gradient(at 80% 90%, rgba(74, 45, 204, 0.2) 0px, transparent 50%);
+  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%);
 }
 
 /* Subtle British pattern textures overlayed in background CSS */

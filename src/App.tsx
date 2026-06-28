@@ -136,7 +136,10 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-[#0A2E9E] text-white font-sans border-t border-white/10 relative z-10 py-12 px-4 md:px-8">
+      <footer 
+        className="bg-[#0A2E9E] text-white font-sans border-t border-white/10 relative z-10 py-12 px-4 md:px-8 bg-cover bg-center bg-no-repeat rounded-t-[40px] md:rounded-t-[48px] overflow-hidden"
+        style={{ backgroundImage: "url('/assets/images/footer_bg.png')" }}
+      >
         <div className="w-full max-w-7xl mx-auto space-y-10">
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
@@ -144,12 +147,12 @@ export default function App() {
             {/* Column 1: Logos */}
             <div className="md:col-span-3 flex flex-col items-start gap-6">
               <img 
-                src="/assets/images/logo_bh.png" 
+                src="/assets/images/logo_bh_white.png" 
                 alt="British House International Logo" 
-                className="h-10 w-auto object-contain brightness-0 invert" 
+                className="h-10 w-auto object-contain" 
               />
               <img 
-                src="/assets/images/logo_ba.png" 
+                src="/assets/images/logo_ba_white.png" 
                 alt="BA Group Beltrán A. Logo" 
                 className="h-10 w-auto object-contain" 
               />
