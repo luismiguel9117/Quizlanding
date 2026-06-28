@@ -195,7 +195,7 @@ export default function ReportResult({
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] py-10 px-4 md:px-8 bg-[#020925] bg-union-jack-grid overflow-hidden text-white">
+    <div className="relative min-h-[calc(100vh-80px)] py-10 px-4 md:px-8 bg-union-jack-grid overflow-hidden text-white">
       
       {/* Confetti Canvas */}
       <canvas

@@ -1,6 +1,15 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Zap, ShieldAlert, Star, Globe2 } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Laptop, 
+  Clock, 
+  Globe2, 
+  CheckCircle2, 
+  Award, 
+  Users, 
+  Building2 
+} from 'lucide-react';
 import MascotLion from './MascotLion';
 
 interface HeroLandingProps {
@@ -12,6 +21,7 @@ export default function HeroLanding({
   onStartAssessment,
   onSeeSampleResults,
 }: HeroLandingProps) {
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -33,12 +43,11 @@ export default function HeroLanding({
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] flex items-center justify-center py-10 px-4 md:px-8 overflow-hidden bg-[#020925] bg-union-jack-grid">
+    <div className="relative min-h-[calc(100vh-100px)] flex items-center justify-center py-10 px-4 md:px-8 overflow-hidden bg-union-jack-grid">
       
       {/* Immersive background light leaks and glows */}
       <div className="absolute top-[10%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-[#1736D1]/20 blur-[130px] pointer-events-none -z-10 animate-pulse-glow" />
       <div className="absolute bottom-[10%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-[#4A2DCC]/15 blur-[120px] pointer-events-none -z-10" />
-      <div className="absolute top-0 right-0 w-[30vw] h-[30vw] rounded-full bg-[#0A2E9E]/25 blur-[100px] pointer-events-none -z-10" />
 
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
         
@@ -47,95 +56,138 @@ export default function HeroLanding({
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="lg:col-span-7 flex flex-col justify-center text-left"
+          className="lg:col-span-7 flex flex-col justify-center text-left space-y-6"
         >
-          {/* Main Headline (Matching image spacing and styling) */}
+          {/* Main Headline */}
           <motion.h1
             variants={itemVariants}
-            className="text-4xl md:text-5.5xl xl:text-6xl font-sans font-black text-white tracking-tight leading-[1.08] mb-6 uppercase"
+            className="text-4xl md:text-5.5xl xl:text-6xl font-sans font-black text-white tracking-tight leading-[1.08] uppercase"
           >
-            Descubre <br />
-            tu nivel de inglés <br />
-            en solo <br />
-            <span className="relative inline-block mt-2">
-              {/* Brush / Highlight Background */}
-              <span className="absolute inset-0 bg-[#00d2ff] rounded-lg transform -skew-x-3 shadow-[0_0_20px_rgba(0,210,255,0.4)]" />
-              <span className="relative z-10 text-white px-5 py-1 text-4xl md:text-5xl xl:text-5.5xl font-black block">
-                5 minutos
-              </span>
-            </span>
+            Mide tu inglés <br />
+            y accede a mejores <br />
+            oportunidades
           </motion.h1>
 
-          {/* Subheadline (Matching text) */}
-          <motion.p
-            variants={itemVariants}
-            className="text-slate-200 text-sm md:text-base font-sans max-w-lg leading-relaxed mb-10 font-medium"
-          >
-            Responde una breve evaluación y recibe una recomendación personalizada basada en estándares internacionales.
-          </motion.p>
-
-          {/* Row of 4 key benefits below the text with simple line icons */}
+          {/* Benefits Badges Grid (Matching reference layout) */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10 max-w-2xl border-t border-white/5 pt-8"
+            className="space-y-3 max-w-xl"
           >
-            {[
-              { text: 'Resultados inmediatos', icon: <Zap className="w-5 h-5 text-[#00d2ff]" /> },
-              { text: 'Evaluación gratuita', icon: <ShieldAlert className="w-5 h-5 text-[#00d2ff]" /> },
-              { text: 'Recomendación personalizada', icon: <Star className="w-5 h-5 text-[#00d2ff]" /> },
-              { text: 'Estándares internacionales', icon: <Globe2 className="w-5 h-5 text-[#00d2ff]" /> },
-            ].map((benefit, index) => (
-              <div 
-                key={index} 
-                className="flex flex-col items-start text-left group"
-              >
-                <div className="mb-3 w-10 h-10 rounded-full border border-white/15 flex items-center justify-center bg-white/5 group-hover:bg-[#00d2ff]/10 group-hover:border-[#00d2ff]/40 transition-all duration-300">
-                  {benefit.icon}
+            {/* Red benefit pill (Clases 100% virtual) */}
+            <div className="bg-[#FF1A3B] text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 text-xs md:text-sm shadow-[0_4px_15px_rgba(255,26,59,0.3)] w-fit">
+              <Laptop className="w-4 h-4 text-white" />
+              <span>Evaluación 100% gratis y en línea</span>
+            </div>
+
+            {/* 2x2 Grid of white benefit cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Card 1 */}
+              <div className="bg-white text-slate-800 p-3 rounded-xl shadow-md flex items-center gap-3 border border-slate-100 text-xs md:text-sm font-semibold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] shrink-0">
+                  <Clock className="w-4.5 h-4.5" />
                 </div>
-                <h4 className="text-[11px] font-bold text-slate-200 font-sans tracking-wide leading-snug uppercase">
-                  {benefit.text}
-                </h4>
+                <span>Mide tu nivel en solo 5 minutos</span>
               </div>
-            ))}
+              
+              {/* Card 2 */}
+              <div className="bg-white text-slate-800 p-3 rounded-xl shadow-md flex items-center gap-3 border border-slate-100 text-xs md:text-sm font-semibold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] shrink-0">
+                  <Globe2 className="w-4.5 h-4.5" />
+                </div>
+                <span>Estándar oficial MCER (A1 - C2)</span>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-white text-slate-800 p-3 rounded-xl shadow-md flex items-center gap-3 border border-slate-100 text-xs md:text-sm font-semibold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] shrink-0">
+                  <CheckCircle2 className="w-4.5 h-4.5" />
+                </div>
+                <span>Reporte de resultados inmediato</span>
+              </div>
+
+              {/* Card 4 */}
+              <div className="bg-white text-slate-800 p-3 rounded-xl shadow-md flex items-center gap-3 border border-slate-100 text-xs md:text-sm font-semibold">
+                <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] shrink-0">
+                  <Award className="w-4.5 h-4.5" />
+                </div>
+                <span>Certificación de nivel estimada</span>
+              </div>
+            </div>
           </motion.div>
 
-          {/* CTA Buttons (Matching screenshot) */}
+          {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2"
           >
-            {/* COMENZAR EVALUACIÓN yellow button */}
+            {/* Red button Iniciar Test */}
             <button
               onClick={onStartAssessment}
-              className="group relative flex items-center justify-center gap-3 bg-[#FFC83D] hover:bg-[#ffe08a] text-[#020925] font-sans font-black tracking-wider uppercase rounded-xl px-8 py-4.5 transition-all duration-300 shadow-[0_0_25px_rgba(255,200,61,0.25)] hover:shadow-[0_0_35px_rgba(255,200,61,0.45)] transform hover:-translate-y-1 cursor-pointer text-center text-sm animate-shine"
+              className="group flex items-center justify-center gap-2 bg-[#FF1A3B] hover:bg-[#E00F2E] text-white font-sans font-black tracking-wider uppercase rounded-full px-8 py-4 transition-all duration-300 shadow-[0_6px_20px_rgba(255,26,59,0.45)] hover:scale-[1.03] cursor-pointer text-center text-sm"
               id="cta-start-free-test"
             >
-              <span>COMENZAR EVALUACIÓN</span>
+              <span>Quiero medir mi nivel</span>
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 stroke-[3px]" />
             </button>
 
-            {/* Ver resultado de ejemplo link */}
+            {/* Outline button demo */}
             <button
               onClick={onSeeSampleResults}
-              className="group flex items-center justify-center gap-1.5 text-white/80 hover:text-white font-sans font-extrabold text-sm uppercase tracking-wider transition-colors cursor-pointer"
+              className="flex items-center justify-center border border-white hover:bg-white/10 text-white font-sans font-bold tracking-wider uppercase rounded-full px-8 py-4 hover:scale-[1.03] transition-all cursor-pointer text-sm"
             >
-              <span>Ver resultado de ejemplo</span>
-              <span className="transform group-hover:translate-x-0.5 transition-transform duration-200">&gt;</span>
+              <span>Ver reporte de ejemplo</span>
             </button>
           </motion.div>
+
+          {/* Bottom highlights / stats (Matching reference) */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-6 text-[11px] font-bold text-white/90 border-t border-white/10 max-w-xl"
+          >
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-[#00B5F7]" />
+              <span>+17 años de experiencia</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#00B5F7]" />
+              <span>+50k alumnos formados</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-[#00B5F7]" />
+              <span>Empresa peruana del año 2021-2024</span>
+            </div>
+          </motion.div>
+
         </motion.div>
 
-        {/* RIGHT COLUMN - MASCOT LION */}
+        {/* RIGHT COLUMN - MASCOT LION WITH FLOATING BADGES */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, type: 'spring' }}
           className="lg:col-span-5 flex items-center justify-center relative mt-10 lg:mt-0"
         >
-          <MascotLion
-            state="welcome"
-            className="w-full animate-float-slow"
-          />
+          {/* Main 3D Mascot Lion */}
+          <div className="relative w-full max-w-md mx-auto aspect-square flex items-center justify-center">
+            <MascotLion
+              state="welcome"
+              className="w-full h-auto animate-float-slow object-contain"
+            />
+
+            {/* Floating Red Badge */}
+            <div className="absolute -top-4 -right-2 bg-[#FF1A3B] text-white p-4 rounded-2xl shadow-[0_10px_25px_rgba(255,26,59,0.4)] flex flex-col items-center justify-center text-center select-none w-28 h-28 rotate-12 animate-pulse-glow border border-white/10">
+              <span className="text-3xl font-black leading-none">TEST</span>
+              <span className="text-[9px] font-black tracking-widest uppercase mt-1">Activo Hoy</span>
+              <span className="text-xs mt-1">⏱️</span>
+            </div>
+
+            {/* Floating Blue Badge */}
+            <div className="absolute -bottom-4 -left-2 bg-[#004BDC] text-white py-3 px-5 rounded-2xl shadow-[0_10px_25px_rgba(0,75,220,0.4)] flex flex-col items-start select-none rotate-[-6deg] border border-white/10">
+              <span className="text-[10px] font-black tracking-widest text-[#00B5F7] uppercase">Evaluación</span>
+              <span className="text-xl font-black tracking-tight leading-none mt-1">100% GRATIS</span>
+              <span className="text-[9px] font-bold text-white/80 mt-1 uppercase">Sin tarjeta de crédito</span>
+            </div>
+          </div>
         </motion.div>
 
       </div>

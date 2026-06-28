@@ -70,8 +70,8 @@ export default function App() {
     <div className="min-h-screen bg-gaming-dark text-white flex flex-col font-sans selection:bg-[#FFC83D] selection:text-[#020925]">
       
       {/* BRAND GLASS HEADER BAR */}
-      <header className="sticky top-0 z-40 bg-[#020925]/85 backdrop-blur-md border-b border-white/5 px-4 md:px-8 py-3.5">
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+      <div className="sticky top-0 z-50 w-full px-4 md:px-8 py-3.5 pointer-events-none">
+        <header className="w-full max-w-7xl mx-auto bg-white rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.15)] px-6 py-2.5 flex items-center justify-between pointer-events-auto border border-slate-100">
           
           {/* Logo Brand container */}
           <div 
@@ -81,35 +81,36 @@ export default function App() {
             <img 
               src="/assets/images/logo_bh.png" 
               alt="British House Logo" 
-              className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 hover:scale-[1.03]"
+              className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-[1.03]"
             />
           </div>
 
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-200">
-            <span className="hover:text-[#FFC83D] transition-colors cursor-pointer">Programas</span>
-            <span className="hover:text-[#FFC83D] transition-colors cursor-pointer">Para empresas</span>
-            <span className="hover:text-[#FFC83D] transition-colors cursor-pointer">Sobre nosotros</span>
-            <span className="hover:text-[#FFC83D] transition-colors cursor-pointer">Recursos</span>
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-black text-slate-600 tracking-wide">
+            <span onClick={handleRestart} className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Inicio</span>
+            <span className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Sobre el Test</span>
+            <span className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Programas</span>
+            <span className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Aula Virtual</span>
           </nav>
 
-          {/* Contact Button with WhatsApp Icon */}
+          {/* Action Button */}
           <div className="flex items-center gap-4">
-            <a 
-              href="https://wa.me/51999999999" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs font-bold text-white border border-white/20 px-5 py-2.5 rounded-full hover:bg-white/10 hover:border-white/40 transition-all duration-300"
+            <button 
+              onClick={() => {
+                if (screen === 'landing') {
+                  setScreen('quiz');
+                } else {
+                  handleRestart();
+                }
+              }}
+              className="bg-[#FF1A3B] hover:bg-[#E00F2E] text-white text-[11px] font-black tracking-wider uppercase rounded-full px-5 py-2.5 transition-all duration-300 shadow-[0_4px_15px_rgba(255,26,59,0.3)] hover:scale-[1.03] cursor-pointer"
             >
-              <span>Contáctanos</span>
-              <svg className="w-4 h-4 text-green-400 fill-current" viewBox="0 0 24 24">
-                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.536.002 10.04-4.501 10.043-10.04 0-2.684-1.044-5.207-2.943-7.107C16.425 1.558 13.902.515 11.217.515 5.676.515 1.171 5.018 1.168 10.559c-.001 1.558.424 3.085 1.233 4.453l-1.02 3.722 3.82-1.002c1.32.72 2.766 1.098 4.446 1.101zM17.91 14.93c-.274-.137-1.62-.8-1.87-.892-.252-.093-.437-.137-.62.137-.183.275-.71.892-.87 1.076-.16.183-.32.206-.594.07-1.63-.8-2.73-1.38-3.82-2.32-.27-.24-.51-.49-.72-.74-.28-.32-.03-.5.12-.65.13-.13.27-.32.41-.48.06-.07.13-.15.19-.22.08-.1.13-.19.19-.29.13-.27.07-.5-.03-.71-.1-.21-.62-1.49-.85-2.04-.22-.53-.47-.46-.65-.47-.16-.01-.35-.01-.54-.01-.19 0-.5.07-.76.35-.38.41-1.46 1.42-1.46 3.47 0 2.05 1.49 4.03 1.7 4.31.21.28 2.93 4.47 7.09 6.27.99.43 1.76.69 2.37.88.99.31 1.9.27 2.62.16.8-.12 2.47-1.01 2.82-1.99.35-.98.35-1.83.25-2.01-.11-.18-.41-.27-.68-.41z"/>
-              </svg>
-            </a>
+              ¡Matricúlate ya!
+            </button>
           </div>
 
-        </div>
-      </header>
+        </header>
+      </div>
 
       {/* CORE SCREEN SWITCHBOARD */}
       <main className="flex-grow">

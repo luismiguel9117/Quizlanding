@@ -149,7 +149,7 @@ export default function AssessmentQuiz({
   // 1. RENDER PRE-ASSESSMENT SCREEN
   if (!hasStarted) {
     return (
-      <div className="min-h-[calc(100vh-80px)] bg-[#020925] bg-union-jack-grid flex items-center justify-center p-4 overflow-hidden relative">
+      <div className="min-h-[calc(100vh-80px)] bg-union-jack-grid flex items-center justify-center p-4 overflow-hidden relative">
         <div className="absolute top-[20%] left-[20%] w-[35vw] h-[35vw] rounded-full bg-[#0A2E9E]/25 blur-[120px] pointer-events-none -z-10" />
         <div className="absolute bottom-[20%] right-[20%] w-[35vw] h-[35vw] rounded-full bg-[#4A2DCC]/20 blur-[120px] pointer-events-none -z-10" />
 
@@ -286,7 +286,7 @@ export default function AssessmentQuiz({
 
   // 3. RENDER ACTIVE ASSESSMENT EXPERIENCE
   return (
-    <div className="w-full min-h-[calc(100vh-80px)] flex flex-col justify-between bg-[#020925] bg-union-jack-grid select-none relative overflow-hidden text-white">
+    <div className="w-full min-h-[calc(100vh-80px)] flex flex-col justify-between bg-union-jack-grid select-none relative overflow-hidden text-white">
       
       {/* Background radial spotlights */}
       <div className="absolute top-[10%] left-[20%] w-[35vw] h-[35vw] rounded-full bg-[#0A2E9E]/15 blur-[120px] pointer-events-none -z-10" />
