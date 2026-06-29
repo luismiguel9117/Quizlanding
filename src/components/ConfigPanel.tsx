@@ -28,6 +28,50 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState(false);
 
+  // Filtering states
+  const [levelFilter, setLevelFilter] = useState<string>('All');
+  const [categoryFilter, setCategoryFilter] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Form Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+
+  // Form fields
+  const [formLevel, setFormLevel] = useState<Question['level']>('A1');
+  const [formCategory, setFormCategory] = useState<Question['category']>('Grammar');
+  const [formText, setFormText] = useState('');
+  const [formOptions, setFormOptions] = useState<string[]>(['', '', '', '']);
+  const [formCorrectAnswer, setFormCorrectAnswer] = useState<number>(0);
+  const [formExplanation, setFormExplanation] = useState('');
+
+  // JSON Import/Export states
+  const [isJsonCardOpen, setIsJsonCardOpen] = useState(false);
+  const [jsonInput, setJsonInput] = useState('');
+  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [jsonSuccess, setJsonSuccess] = useState(false);
+
+  // Filtered list calculation
+  const filteredQuestions = useMemo(() => {
+    return questionsList.filter(q => {
+      const matchesLevel = levelFilter === 'All' || q.level === levelFilter;
+      const matchesCategory = categoryFilter === 'All' || q.category === categoryFilter;
+      const matchesSearch = q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            q.explanation.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            q.options.some(opt => opt.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesLevel && matchesCategory && matchesSearch;
+    });
+  }, [questionsList, levelFilter, categoryFilter, searchQuery]);
+
+  // Total statistics per level
+  const statsByLevel = useMemo(() => {
+    const counts: Record<string, number> = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+    questionsList.forEach(q => {
+      if (counts[q.level] !== undefined) counts[q.level]++;
+    });
+    return counts;
+  }, [questionsList]);
+
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === 'british2026') {
@@ -102,50 +146,6 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       </div>
     );
   }
-  
-  // Filtering states
-  const [levelFilter, setLevelFilter] = useState<string>('All');
-  const [categoryFilter, setCategoryFilter] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // Form Modal states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-
-  // Form fields
-  const [formLevel, setFormLevel] = useState<Question['level']>('A1');
-  const [formCategory, setFormCategory] = useState<Question['category']>('Grammar');
-  const [formText, setFormText] = useState('');
-  const [formOptions, setFormOptions] = useState<string[]>(['', '', '', '']);
-  const [formCorrectAnswer, setFormCorrectAnswer] = useState<number>(0);
-  const [formExplanation, setFormExplanation] = useState('');
-
-  // JSON Import/Export states
-  const [isJsonCardOpen, setIsJsonCardOpen] = useState(false);
-  const [jsonInput, setJsonInput] = useState('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
-  const [jsonSuccess, setJsonSuccess] = useState(false);
-
-  // Filtered list calculation
-  const filteredQuestions = useMemo(() => {
-    return questionsList.filter(q => {
-      const matchesLevel = levelFilter === 'All' || q.level === levelFilter;
-      const matchesCategory = categoryFilter === 'All' || q.category === categoryFilter;
-      const matchesSearch = q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            q.explanation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            q.options.some(opt => opt.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesLevel && matchesCategory && matchesSearch;
-    });
-  }, [questionsList, levelFilter, categoryFilter, searchQuery]);
-
-  // Total statistics per level
-  const statsByLevel = useMemo(() => {
-    const counts: Record<string, number> = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
-    questionsList.forEach(q => {
-      if (counts[q.level] !== undefined) counts[q.level]++;
-    });
-    return counts;
-  }, [questionsList]);
 
   // Open Form to Add Question
   const handleOpenAdd = () => {
