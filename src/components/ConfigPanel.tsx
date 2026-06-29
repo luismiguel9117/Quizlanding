@@ -6,8 +6,6 @@ import {
   Edit, 
   Trash2, 
   RotateCcw, 
-  Download, 
-  Upload, 
   Save, 
   Check, 
   HelpCircle,
@@ -45,12 +43,8 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const [formCorrectAnswer, setFormCorrectAnswer] = useState<number>(0);
   const [formExplanation, setFormExplanation] = useState('');
 
-  // JSON Import/Export states
-  const [isJsonCardOpen, setIsJsonCardOpen] = useState(false);
+  // Scoring card states
   const [isScoringCardOpen, setIsScoringCardOpen] = useState(true);
-  const [jsonInput, setJsonInput] = useState('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
-  const [jsonSuccess, setJsonSuccess] = useState(false);
 
   // Level weights state
   const [levelWeights, setLevelWeights] = useState<Record<string, number>>(() => getLevelWeights());
@@ -307,39 +301,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     }
   };
 
-  // Export to JSON string in textarea
-  const handleExport = () => {
-    const jsonStr = JSON.stringify(questionsList, null, 2);
-    navigator.clipboard.writeText(jsonStr);
-    alert('JSON copiado al portapapeles correctamente.');
-  };
 
-  // Import from JSON string
-  const handleImport = () => {
-    setJsonError(null);
-    setJsonSuccess(false);
-    try {
-      const parsed = JSON.parse(jsonInput);
-      if (!Array.isArray(parsed)) {
-        throw new Error('El JSON debe ser una lista/array de preguntas.');
-      }
-      
-      // Simple validation of fields
-      parsed.forEach((q: any, i: number) => {
-        if (!q.id || !q.level || !q.category || !q.text || !Array.isArray(q.options) || q.correctAnswer === undefined || !q.explanation) {
-          throw new Error(`La pregunta en el índice ${i} no tiene el formato correcto (id, level, category, text, options, correctAnswer, explanation).`);
-        }
-      });
-
-      saveQuestions(parsed);
-      setQuestionsList(parsed);
-      setJsonSuccess(true);
-      setJsonInput('');
-      setTimeout(() => setJsonSuccess(false), 3000);
-    } catch (e: any) {
-      setJsonError(e.message || 'Error al procesar el JSON.');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gaming-dark text-white py-8 px-4 md:px-8 font-sans">
@@ -542,66 +504,6 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
           )}
         </div>
 
-        {/* Collapsible JSON Import/Export */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-          <button 
-            onClick={() => setIsJsonCardOpen(!isJsonCardOpen)}
-            className="w-full flex items-center justify-between px-6 py-4 font-bold text-sm tracking-wider uppercase border-b border-white/5 bg-white/[0.02] cursor-pointer"
-          >
-            <span>Importar / Exportar Base de Preguntas (JSON)</span>
-            <span className="text-xs">{isJsonCardOpen ? '▲ Ocultar' : '▼ Mostrar'}</span>
-          </button>
-
-          {isJsonCardOpen && (
-            <div className="p-6 space-y-4">
-              <p className="text-xs text-white/70">
-                Puedes copiar la base completa actual en formato JSON para guardarla como respaldo, o pegar un archivo de respaldo nuevo para importarlo.
-              </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleExport}
-                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Copiar JSON de preguntas</span>
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-white/80">Pegar JSON para importar:</label>
-                <textarea
-                  value={jsonInput}
-                  onChange={(e) => setJsonInput(e.target.value)}
-                  placeholder='[\n  {\n    "id": 1,\n    "level": "A1",\n    "category": "Grammar",\n    "text": "...",\n    "options": ["...", "..."],\n    "correctAnswer": 0,\n    "explanation": "..."\n  }\n]'
-                  className="w-full h-32 bg-black/30 border border-white/10 rounded-xl p-3 text-xs font-mono text-white/90 focus:outline-none focus:border-[#00B5F7]"
-                />
-              </div>
-
-              {jsonError && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{jsonError}</span>
-                </div>
-              )}
-
-              {jsonSuccess && (
-                <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl flex items-center gap-2">
-                  <Check className="w-4 h-4" />
-                  <span>¡Preguntas importadas con éxito!</span>
-                </div>
-              )}
-
-              <button
-                onClick={handleImport}
-                disabled={!jsonInput.trim()}
-                className="flex items-center gap-2 bg-[#004BDC] hover:bg-[#0b3bbf] disabled:opacity-50 disabled:cursor-not-allowed px-5 py-2.5 rounded-xl text-xs font-black uppercase transition-all cursor-pointer"
-              >
-                <Upload className="w-4 h-4" />
-                <span>Ejecutar Importación</span>
-              </button>
-            </div>
-          )}
-        </div>
 
         {/* Filter and Search Bar */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
