@@ -160,12 +160,12 @@ export default function HeroLanding({
 
         </motion.div>
 
-        {/* RIGHT COLUMN - MASCOT LION WITH FLOATING BADGES */}
+        {/* RIGHT COLUMN - MASCOT LION WITH FLOATING BADGES (Hidden on mobile) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, type: 'spring' }}
-          className="lg:col-span-5 flex items-center justify-center relative mt-10 lg:mt-0"
+          className="hidden lg:flex lg:col-span-5 items-center justify-center relative lg:mt-0"
         >
           {/* Main 3D Mascot Lion */}
           <div className="relative w-full max-w-md mx-auto min-h-[380px] md:min-h-[460px] flex items-center justify-center">

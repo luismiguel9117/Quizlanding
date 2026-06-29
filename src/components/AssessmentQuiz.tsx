@@ -332,22 +332,22 @@ export default function AssessmentQuiz({
       </div>
 
       {/* CORE CONTENT (Split layout: Question on Left, Lion Assistant on Right) */}
-      <div className="relative flex-1 w-full max-w-5xl mx-auto px-4 pt-4 pb-[100px] lg:pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="relative flex-1 w-full max-w-5xl mx-auto px-4 pt-4 pb-[80px] lg:pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
         {/* LEFT PANEL: ACTIVE QUESTION CARD (8 Columns) */}
         <div className="lg:col-span-8 flex flex-col justify-center">
-          <div className="bg-[#05144b]/60 backdrop-blur-xl p-6 md:p-8 rounded-[32px] border border-white/10 shadow-2xl transition-all flex flex-col justify-between py-8">
+          <div className="bg-[#05144b]/60 backdrop-blur-xl p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-[32px] border border-white/10 shadow-2xl transition-all flex flex-col justify-between">
             
             {/* Header / Instructions */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#00d2ff] animate-ping" />
-              <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#00d2ff]">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00d2ff] animate-ping" />
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-widest text-[#00d2ff]">
                 Selecciona la respuesta correcta.
               </span>
             </div>
 
             {/* Question Text in English */}
-            <div className="my-6 min-h-[90px] flex items-center">
+            <div className="my-3 sm:my-6 min-h-[50px] sm:min-h-[90px] flex items-center">
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={currentIndex}
@@ -355,7 +355,7 @@ export default function AssessmentQuiz({
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   transition={{ duration: 0.25 }}
-                  className="text-2xl md:text-3xl lg:text-3.5xl font-sans font-black text-white leading-tight uppercase text-left"
+                  className="text-lg sm:text-2xl md:text-3xl lg:text-3.5xl font-sans font-black text-white leading-tight uppercase text-left"
                 >
                   {/_{2,}/.test(currentQuestion.text) ? (
                     (() => {
@@ -378,7 +378,7 @@ export default function AssessmentQuiz({
             </div>
 
             {/* Horizontal Lion Dialog for mobile screens (Duolingo style) */}
-            <div className="lg:hidden flex items-center gap-3.5 mb-6 bg-[#05144b]/80 border border-white/10 p-3 rounded-2xl">
+            <div className="lg:hidden flex items-center gap-3 mb-4 bg-[#05144b]/80 border border-white/10 p-2 rounded-xl">
               <img 
                 src={
                   selectedAnswers[currentQuestion.id] === undefined
@@ -388,9 +388,9 @@ export default function AssessmentQuiz({
                     : '/assets/images/lion_quiz_presenter.png'
                 } 
                 alt="Leo el Asistente" 
-                className="w-14 h-14 object-contain shrink-0 rounded-full border border-white/20 bg-white/5 shadow-inner"
+                className="w-11 h-11 object-contain shrink-0 rounded-full border border-white/20 bg-white/5 shadow-inner"
               />
-              <div className="relative flex-1 bg-[#1736D1] text-white py-2 px-3 rounded-xl text-xs font-bold leading-normal shadow-[0_4px_12px_rgba(23,54,209,0.3)]">
+              <div className="relative flex-1 bg-[#1736D1] text-white py-1.5 px-2.5 rounded-lg text-[10.5px] font-bold leading-snug shadow-[0_4px_12px_rgba(23,54,209,0.3)]">
                 {/* Speech bubble pointer indicator */}
                 <div className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#1736D1] rotate-45 border-l border-b border-[#1736D1]" />
                 <p className="relative z-10">{mascotRemark || '¡Tómate tu tiempo para responder!'}</p>
@@ -398,7 +398,7 @@ export default function AssessmentQuiz({
             </div>
 
             {/* ANSWER OPTIONS - 2X2 GRID SYSTEM AS PER DESIGN IMAGE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-4">
               <AnimatePresence mode="popLayout">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswers[currentQuestion.id] === idx;
@@ -420,7 +420,7 @@ export default function AssessmentQuiz({
                         '--mouse-x': `${coords.x}px`,
                         '--mouse-y': `${coords.y}px`,
                       } as React.CSSProperties}
-                      className={`group w-full text-left p-4.5 rounded-2xl border transition-all duration-200 relative cursor-pointer select-none overflow-hidden ${
+                      className={`group w-full text-left p-3.5 md:p-4.5 rounded-xl md:rounded-2xl border transition-all duration-200 relative cursor-pointer select-none overflow-hidden ${
                         isSelected
                           ? 'bg-gradient-to-r from-[#0A2E9E] to-[#1736D1] border-[#00d2ff] shadow-[0_0_20px_rgba(0,210,255,0.4)]'
                           : 'bg-[#020925]/60 border-white/5 hover:border-[#1736D1]/40 hover:bg-[#05144b]/50 hover:translate-x-0.5'
@@ -439,7 +439,7 @@ export default function AssessmentQuiz({
                       <div className="flex items-center gap-3 relative z-10">
                         {/* Selected Radio Indicator with Letter (A, B, C, D) */}
                         <div
-                          className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 font-sans font-extrabold text-sm transition-all ${
+                          className={`w-7 h-7 md:w-8 md:h-8 rounded-full border flex items-center justify-center shrink-0 font-sans font-extrabold text-xs md:text-sm transition-all ${
                             isSelected
                               ? 'border-[#00d2ff] bg-[#00d2ff] text-[#020925]'
                               : 'border-white/10 bg-white/5 text-slate-300 group-hover:border-[#00d2ff] group-hover:text-white'
@@ -449,7 +449,7 @@ export default function AssessmentQuiz({
                         </div>
 
                         <span
-                          className={`text-sm md:text-base font-sans font-extrabold tracking-wide transition-colors ${
+                          className={`text-xs sm:text-sm md:text-base font-sans font-extrabold tracking-wide transition-colors ${
                             isSelected ? 'text-white' : 'text-slate-200 group-hover:text-white'
                           }`}
                         >
@@ -485,15 +485,15 @@ export default function AssessmentQuiz({
       </div>
 
       {/* FOOTER ACTIONS BAR - Fixed on mobile, relative on desktop (Duolingo style) */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#020925]/90 backdrop-blur-lg border-t border-white/10 p-4 lg:relative lg:bg-transparent lg:border-t-0 lg:p-0 lg:max-w-5xl lg:mx-auto lg:px-4 lg:pb-6 lg:z-auto">
-        <div className="bg-[#05144b]/60 p-3 md:p-4 rounded-2xl border border-white/10 flex items-center justify-between gap-4 shadow-xl max-w-5xl mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#020925]/95 backdrop-blur-lg border-t border-white/10 p-2.5 sm:p-4 lg:relative lg:bg-transparent lg:border-t-0 lg:p-0 lg:max-w-5xl lg:mx-auto lg:px-4 lg:pb-6 lg:z-auto">
+        <div className="bg-[#05144b]/60 p-2 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl border border-white/10 flex items-center justify-between gap-4 shadow-xl max-w-5xl mx-auto">
           {/* Back Navigation */}
           <button
             onClick={handlePrev}
             disabled={currentIndex === 0}
-            className="flex items-center gap-2 px-5 py-3 text-xs font-extrabold font-sans text-slate-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none rounded-xl hover:bg-white/5 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 md:px-5 md:py-3 text-[10px] sm:text-xs font-extrabold font-sans text-slate-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none rounded-lg sm:rounded-xl hover:bg-white/5 transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             Anterior
           </button>
 
@@ -501,7 +501,7 @@ export default function AssessmentQuiz({
           <button
             onClick={handleNext}
             disabled={!isSelected}
-            className={`flex items-center gap-2 px-8 py-4.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md ${
+            className={`flex items-center gap-1.5 px-4.5 py-2.5 md:px-8 md:py-4.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md ${
               isSelected
                 ? 'bg-gradient-to-r from-[#FFC83D] to-[#E08B00] text-[#020925] hover:scale-103 shadow-[0_0_20px_rgba(255,200,61,0.25)] cursor-pointer animate-shine'
                 : 'bg-white/5 text-slate-500 cursor-not-allowed shadow-none'
@@ -510,7 +510,7 @@ export default function AssessmentQuiz({
             <span>
               {currentQuestionNumber === totalQuestions ? 'Ver mi resultado' : 'Siguiente pregunta'}
             </span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
