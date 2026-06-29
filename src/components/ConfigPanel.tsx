@@ -25,18 +25,12 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   
   // Authentication states
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('bh_admin_auth') === 'true';
-    }
-    return false;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState(false);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === 'british2026') {
-      sessionStorage.setItem('bh_admin_auth', 'true');
       setIsAuthenticated(true);
       setAuthError(false);
     } else {
