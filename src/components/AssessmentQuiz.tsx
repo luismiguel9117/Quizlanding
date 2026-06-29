@@ -161,7 +161,7 @@ export default function AssessmentQuiz({
             <img 
               src="/assets/images/clipboard.png" 
               alt="Antes de comenzar" 
-              className="w-24 md:w-28 h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,210,255,0.25)] animate-float-medium"
+              className="w-36 md:w-40 lg:w-44 h-auto object-contain drop-shadow-[0_10px_25px_rgba(0,210,255,0.3)] animate-float-medium"
             />
           </div>
 
