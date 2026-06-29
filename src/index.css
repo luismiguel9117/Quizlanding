@@ -35,7 +35,6 @@
 }
 
 html {
-  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -45,9 +44,7 @@ body {
   background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%) no-repeat center center fixed;
   background-size: cover;
   margin: 0;
-  height: auto;
-  min-height: 100vh;
-  overflow: visible;
+  overflow: hidden;
 }
 
 body::before {
