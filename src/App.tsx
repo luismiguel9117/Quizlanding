@@ -112,7 +112,7 @@ export default function App() {
             <img 
               src="/assets/images/logo_bh.png" 
               alt="British House Logo" 
-              className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-[1.03]"
+              className="h-7 md:h-10 w-auto object-contain transition-transform duration-300 hover:scale-[1.03]"
             />
           </div>
 
@@ -128,7 +128,7 @@ export default function App() {
                   handleRestart();
                 }
               }}
-              className="bg-[#FF1A3B] hover:bg-[#E00F2E] text-white text-[11px] font-black tracking-wider uppercase rounded-full px-5 py-2.5 transition-all duration-300 shadow-[0_4px_15px_rgba(255,26,59,0.3)] hover:scale-[1.03] cursor-pointer"
+              className="bg-[#FF1A3B] hover:bg-[#E00F2E] text-white text-[9.5px] md:text-[11px] font-black tracking-wider uppercase rounded-full px-3.5 py-2 md:px-5 md:py-2.5 transition-all duration-300 shadow-[0_4px_15px_rgba(255,26,59,0.3)] hover:scale-[1.03] cursor-pointer"
             >
               ¡Matricúlate ya!
             </button>

@@ -101,7 +101,7 @@ export default function MascotLion({
           </div>
 
           {/* A2 Elementary - Mid Left */}
-          <div className="absolute top-[35%] -left-[10%] z-20 animate-float-medium select-none">
+          <div className="absolute top-[35%] -left-[2%] md:-left-[10%] z-20 animate-float-medium select-none">
             <img 
               src="/assets/images/badge_a2.png" 
               alt="A2 Elementary" 
@@ -130,7 +130,7 @@ export default function MascotLion({
           </div>
 
           {/* Cambridge Badge - Mid Right */}
-          <div className="absolute top-[30%] -right-[15%] md:-right-[20%] z-20 animate-float-fast select-none">
+          <div className="absolute top-[30%] -right-[2%] md:-right-[20%] z-20 animate-float-fast select-none">
             <div className="bg-white text-slate-800 py-1.5 px-3 rounded-2xl shadow-lg border border-slate-100 flex items-center gap-2 max-w-[130px] md:max-w-[160px] rotate-6">
               <img 
                 src="/assets/images/badge_cambridge.png" 

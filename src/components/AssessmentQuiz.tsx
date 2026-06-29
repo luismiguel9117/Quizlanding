@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, ArrowRight, Loader2, Clock, CheckCircle2, HelpCircle, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Clock, CheckCircle2, HelpCircle, Star, X } from 'lucide-react';
 import { Question } from '../types';
 import { QUESTIONS } from '../data/questions';
 import MascotLion from './MascotLion';
@@ -293,46 +293,46 @@ export default function AssessmentQuiz({
       <div className="absolute bottom-[10%] right-[20%] w-[35vw] h-[35vw] rounded-full bg-[#4A2DCC]/15 blur-[120px] pointer-events-none -z-10" />
 
       {/* TOP PROGRESS HEADER BAR */}
-      <div className="w-full max-w-5xl mx-auto px-4 pt-6 flex flex-col items-center">
-        <div className="w-full flex items-center justify-between gap-4 mb-3 text-xs font-bold font-sans text-slate-300">
-          {/* Back Action */}
+      <div className="w-full max-w-5xl mx-auto px-4 pt-4 md:pt-6 flex flex-col gap-2">
+        <div className="w-full flex items-center justify-between gap-3 text-xs font-bold font-sans text-slate-300">
+          {/* Back Action - Shows X icon, text hidden on very small screens */}
           <button
             onClick={onExit}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 tracking-wider uppercase rounded-xl transition-all cursor-pointer"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 md:px-3.5 md:py-2 bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 tracking-wider uppercase rounded-xl transition-all cursor-pointer text-slate-300 hover:text-white shrink-0"
+            title="Salir"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Salir
+            <X className="w-4 h-4" />
+            <span className="hidden sm:inline">Salir</span>
           </button>
 
-          {/* QUESTION NUMBER DISPLAY */}
-          <div className="bg-[#05144b]/60 border border-white/15 px-4 py-2 rounded-xl text-center">
-            <span className="uppercase tracking-widest text-white/90">
-              Pregunta {currentQuestionNumber} de {totalQuestions}
-            </span>
+          {/* PROGRESS TRACKER (Fills center) */}
+          <div className="flex-1 bg-[#020925]/80 p-0.5 md:p-1 rounded-xl border border-white/10 shadow-lg mx-1">
+            <div className="h-2.5 md:h-3 bg-[#05144b] rounded-lg overflow-hidden relative">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ type: 'spring', stiffness: 90, damping: 15 }}
+                className="bg-gradient-to-r from-[#0A2E9E] to-[#00d2ff] h-full rounded-lg shadow-[0_0_10px_rgba(0,210,255,0.5)]"
+              />
+            </div>
           </div>
 
           {/* DYNAMIC COUNTDOWN TIMER (MM:SS) */}
-          <div className="flex items-center gap-2 bg-[#FFC83D]/10 border border-[#FFC83D]/30 px-3.5 py-2 rounded-xl text-[#FFC83D]">
-            <Clock className="w-4 h-4" />
-            <span className="font-mono font-black">{formattedTimeLeft}</span>
+          <div className="flex items-center gap-1.5 bg-[#FFC83D]/10 border border-[#FFC83D]/30 px-2.5 py-2 md:px-3.5 md:py-2 rounded-xl text-[#FFC83D] shrink-0 text-xs font-mono font-black">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{formattedTimeLeft}</span>
           </div>
         </div>
 
-        {/* PROGRESS TRACKER */}
-        <div className="w-full relative bg-[#020925]/80 p-1 rounded-xl border border-white/10 shadow-lg">
-          <div className="w-full h-3 bg-[#05144b] rounded-lg overflow-hidden relative">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercent}%` }}
-              transition={{ type: 'spring', stiffness: 90, damping: 15 }}
-              className="bg-gradient-to-r from-[#0A2E9E] to-[#00d2ff] h-full rounded-lg shadow-[0_0_10px_rgba(0,210,255,0.5)]"
-            />
-          </div>
+        {/* Small subtitle with Question progress */}
+        <div className="w-full flex justify-between items-center px-1 text-[10px] md:text-xs font-bold font-sans text-slate-400 uppercase tracking-widest">
+          <span>Pregunta {currentQuestionNumber} de {totalQuestions}</span>
+          <span className="hidden sm:inline">Selecciona la respuesta correcta</span>
         </div>
       </div>
 
       {/* CORE CONTENT (Split layout: Question on Left, Lion Assistant on Right) */}
-      <div className="relative flex-1 w-full max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="relative flex-1 w-full max-w-5xl mx-auto px-4 pt-4 pb-[100px] lg:pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
         {/* LEFT PANEL: ACTIVE QUESTION CARD (8 Columns) */}
         <div className="lg:col-span-8 flex flex-col justify-center">
@@ -375,6 +375,26 @@ export default function AssessmentQuiz({
                   )}
                 </motion.h2>
               </AnimatePresence>
+            </div>
+
+            {/* Horizontal Lion Dialog for mobile screens (Duolingo style) */}
+            <div className="lg:hidden flex items-center gap-3.5 mb-6 bg-[#05144b]/80 border border-white/10 p-3 rounded-2xl">
+              <img 
+                src={
+                  selectedAnswers[currentQuestion.id] === undefined
+                    ? '/assets/images/lion_quiz_thoughtful.png'
+                    : currentIndex % 2 === 0
+                    ? '/assets/images/lion_quiz_pointer.png'
+                    : '/assets/images/lion_quiz_presenter.png'
+                } 
+                alt="Leo el Asistente" 
+                className="w-14 h-14 object-contain shrink-0 rounded-full border border-white/20 bg-white/5 shadow-inner"
+              />
+              <div className="relative flex-1 bg-[#1736D1] text-white py-2 px-3 rounded-xl text-xs font-bold leading-normal shadow-[0_4px_12px_rgba(23,54,209,0.3)]">
+                {/* Speech bubble pointer indicator */}
+                <div className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#1736D1] rotate-45 border-l border-b border-[#1736D1]" />
+                <p className="relative z-10">{mascotRemark || '¡Tómate tu tiempo para responder!'}</p>
+              </div>
             </div>
 
             {/* ANSWER OPTIONS - 2X2 GRID SYSTEM AS PER DESIGN IMAGE */}
@@ -446,7 +466,7 @@ export default function AssessmentQuiz({
         </div>
 
         {/* RIGHT PANEL: LION DIALOG ASSISTANT (4 Columns) */}
-        <div className="lg:col-span-4 flex flex-col items-center justify-center">
+        <div className="hidden lg:flex lg:col-span-4 flex-col items-center justify-center">
           <div className="w-full flex justify-center items-center h-full max-w-sm">
             <MascotLion
               state={
@@ -464,9 +484,9 @@ export default function AssessmentQuiz({
 
       </div>
 
-      {/* FOOTER ACTIONS BAR */}
-      <div className="w-full max-w-5xl mx-auto px-4 pb-6 mt-auto">
-        <div className="bg-[#05144b]/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex items-center justify-between gap-4 shadow-xl">
+      {/* FOOTER ACTIONS BAR - Fixed on mobile, relative on desktop (Duolingo style) */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#020925]/90 backdrop-blur-lg border-t border-white/10 p-4 lg:relative lg:bg-transparent lg:border-t-0 lg:p-0 lg:max-w-5xl lg:mx-auto lg:px-4 lg:pb-6 lg:z-auto">
+        <div className="bg-[#05144b]/60 p-3 md:p-4 rounded-2xl border border-white/10 flex items-center justify-between gap-4 shadow-xl max-w-5xl mx-auto">
           {/* Back Navigation */}
           <button
             onClick={handlePrev}
