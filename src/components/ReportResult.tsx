@@ -467,13 +467,10 @@ export default function ReportResult({
                     </div>
 
                     {/* Speech bubble style explanations */}
-                    <div className="bg-[#0A2E9E]/10 p-4 rounded-xl border border-[#FFC83D]/20 text-xs text-white/90 flex gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-tr from-[#004BFF] to-[#0A2E9E] rounded-lg flex items-center justify-center font-sans font-black text-[10px] text-white shrink-0 shadow-md">
-                        LEO
-                      </div>
+                    <div className="bg-[#0A2E9E]/10 p-4 rounded-xl border border-[#FFC83D]/20 text-xs text-white/90">
                       <div className="leading-relaxed">
                         <span className="font-mono font-black text-[10px] text-[#FFC83D] uppercase tracking-wider block">
-                          Consejo académico de Leo:
+                          Consejo académico:
                         </span>
                         <p className="mt-1 text-slate-300 font-sans font-medium">{question.explanation}</p>
                       </div>
