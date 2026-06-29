@@ -166,14 +166,14 @@ export default function MascotLion({
         <img
           src={imageSrc}
           alt={altText}
-          className={`h-auto object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.45)] transition-all duration-500 hover:scale-[1.03] select-none ${
+          className={`object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.45)] transition-all duration-500 hover:scale-[1.03] select-none ${
             state === 'welcome' 
-              ? 'w-72 md:w-[24rem]' 
+              ? 'w-72 md:w-[24rem] h-auto' 
               : state === 'success' 
-              ? 'w-48 md:w-56' 
+              ? 'w-48 md:w-56 h-auto' 
               : state.startsWith('quiz_')
-              ? 'w-36 md:w-44 lg:w-48'
-              : 'w-32'
+              ? 'h-64 md:h-80 lg:h-[22rem] w-auto'
+              : 'w-32 h-auto'
           }`}
         />
       </div>
