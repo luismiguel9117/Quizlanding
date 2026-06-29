@@ -180,6 +180,10 @@ export default function MascotLion({
               ? 'h-72 md:h-96 lg:h-[27rem] w-auto'
               : 'w-32 h-auto'
           }`}
+          style={state === 'welcome' ? {
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 98%)',
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 98%)'
+          } : undefined}
         />
       </div>
 
