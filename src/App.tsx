@@ -116,13 +116,7 @@ export default function App() {
             />
           </div>
 
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8 text-xs font-black text-slate-600 tracking-wide">
-            <span onClick={handleRestart} className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Inicio</span>
-            <span className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Sobre el Test</span>
-            <span className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Programas</span>
-            <span className="hover:text-[#004BDC] transition-colors cursor-pointer uppercase">Aula Virtual</span>
-          </nav>
+
 
           {/* Action Button */}
           <div className="flex items-center gap-4">
