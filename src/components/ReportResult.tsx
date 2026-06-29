@@ -331,11 +331,11 @@ export default function ReportResult({
                 </div>
               </div>
 
-              {/* 3D Certificate floating at the bottom right of card */}
+              {/* 3D Checklist floating at the bottom right of card */}
               <div className="flex justify-end mt-4">
                 <img 
-                  src="/assets/images/badge_certificate.png" 
-                  alt="Certificado British House" 
+                  src="/assets/images/clipboard.png" 
+                  alt="Checklist British House" 
                   className="w-16 h-auto object-contain drop-shadow-md animate-float-medium"
                 />
               </div>
