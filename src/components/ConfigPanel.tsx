@@ -44,7 +44,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const [formExplanation, setFormExplanation] = useState('');
 
   // Scoring card states
-  const [isScoringCardOpen, setIsScoringCardOpen] = useState(true);
+  const [isScoringCardOpen, setIsScoringCardOpen] = useState(false);
 
   // Level weights state
   const [levelWeights, setLevelWeights] = useState<Record<string, number>>(() => getLevelWeights());
@@ -62,7 +62,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
 
   // Level thresholds state
   const [levelThresholds, setLevelThresholds] = useState<LevelThresholds>(() => getLevelThresholds());
-  const [isThresholdsCardOpen, setIsThresholdsCardOpen] = useState(true);
+  const [isThresholdsCardOpen, setIsThresholdsCardOpen] = useState(false);
 
   const handleThresholdChange = (lvl: keyof LevelThresholds, newPctStr: string) => {
     const pctVal = parseInt(newPctStr, 10);
