@@ -9,7 +9,9 @@ import {
   BookOpen, 
   Clock, 
   Calendar,
-  Volume2
+  Volume2,
+  MessageSquare,
+  Languages
 } from 'lucide-react';
 import { EnglishLevelKey } from '../types';
 import { QUESTIONS, LEVEL_DETAILS, getLevelWeights, getLevelThresholds } from '../data/questions';
@@ -300,23 +302,41 @@ export default function ReportResult({
 
                 {/* Specific 5 benefit checkmarks list */}
                 <div className="mt-5 space-y-2.5">
-                  {['Conversación', 'Comprensión auditiva', 'Gramática', 'Vocabulario', 'Fluidez y confianza'].map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <div className="w-5 h-5 bg-[#0A2E9E]/20 text-[#00d2ff] rounded-lg border border-[#00d2ff]/30 flex items-center justify-center shrink-0">
-                        <span className="text-[10px] font-black">✓</span>
+                  {['Conversación', 'Comprensión auditiva', 'Gramática', 'Vocabulario', 'Fluidez y confianza'].map((item, idx) => {
+                    const getIcon = () => {
+                      switch (item) {
+                        case 'Conversación':
+                          return <MessageSquare className="w-3.5 h-3.5 text-[#00d2ff]" />;
+                        case 'Comprensión auditiva':
+                          return <Volume2 className="w-3.5 h-3.5 text-[#00d2ff]" />;
+                        case 'Gramática':
+                          return <BookOpen className="w-3.5 h-3.5 text-[#00d2ff]" />;
+                        case 'Vocabulario':
+                          return <Languages className="w-3.5 h-3.5 text-[#00d2ff]" />;
+                        case 'Fluidez y confianza':
+                          return <Sparkles className="w-3.5 h-3.5 text-[#00d2ff]" />;
+                        default:
+                          return <CheckCircle2 className="w-3.5 h-3.5 text-[#00d2ff]" />;
+                      }
+                    };
+                    return (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className="w-6 h-6 bg-[#00d2ff]/10 rounded-lg border border-[#00d2ff]/20 flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(0,210,255,0.05)]">
+                          {getIcon()}
+                        </div>
+                        <span className="text-xs font-sans font-bold text-slate-200">{item}</span>
                       </div>
-                      <span className="text-xs font-sans font-bold text-slate-200">{item}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* 3D Backpack floating at the bottom right of card */}
+              {/* 3D Certificate floating at the bottom right of card */}
               <div className="flex justify-end mt-4">
                 <img 
-                  src="/assets/images/backpack.png" 
-                  alt="British House Mochila" 
-                  className="w-14 h-auto object-contain drop-shadow-md animate-float-medium"
+                  src="/assets/images/badge_certificate.png" 
+                  alt="Certificado British House" 
+                  className="w-16 h-auto object-contain drop-shadow-md animate-float-medium"
                 />
               </div>
             </div>
