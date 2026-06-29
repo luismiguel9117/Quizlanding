@@ -214,13 +214,30 @@ const DEFAULT_QUESTIONS: Question[] = [
   }
 ];
 
-// Helper to get questions from localStorage:
 const getQuestionsFromStorage = (): Question[] => {
   if (typeof window === 'undefined') return DEFAULT_QUESTIONS;
   const stored = localStorage.getItem('bh_quiz_questions');
   if (stored) {
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        // Strict validation to filter out any corrupted or incomplete items
+        const valid = parsed.filter((q: any) => 
+          q &&
+          typeof q.id === 'number' &&
+          typeof q.text === 'string' &&
+          Array.isArray(q.options) &&
+          q.options.length === 4 &&
+          q.options.every((o: any) => typeof o === 'string') &&
+          typeof q.correctAnswer === 'number' &&
+          typeof q.explanation === 'string' &&
+          ['Grammar', 'Vocabulary', 'Comprehension'].includes(q.category) &&
+          ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(q.level)
+        );
+        if (valid.length > 0) {
+          return valid;
+        }
+      }
     } catch (e) {
       console.error("Failed to parse stored questions, falling back to default", e);
     }
