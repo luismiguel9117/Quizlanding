@@ -357,14 +357,19 @@ export default function AssessmentQuiz({
                   transition={{ duration: 0.25 }}
                   className="text-2xl md:text-3xl lg:text-3.5xl font-sans font-black text-white leading-tight uppercase text-left"
                 >
-                  {currentQuestion.text.includes('_____') ? (
-                    <>
-                      {currentQuestion.text.split('_____')[0]}
-                      <span className="inline-block min-w-[70px] border-b-[4px] border-[#00d2ff] mx-2 text-[#00d2ff] px-2 text-center select-none font-bold">
-                        _____
-                      </span>
-                      {currentQuestion.text.split('_____')[1]}
-                    </>
+                  {/_{2,}/.test(currentQuestion.text) ? (
+                    (() => {
+                      const parts = currentQuestion.text.split(/_{2,}/);
+                      return (
+                        <>
+                          {parts[0]}
+                          <span className="inline-block min-w-[70px] border-b-[4px] border-[#00d2ff] mx-2 text-[#00d2ff] px-2 text-center select-none font-bold">
+                            _____
+                          </span>
+                          {parts[1]}
+                        </>
+                      );
+                    })()
                   ) : (
                     currentQuestion.text
                   )}

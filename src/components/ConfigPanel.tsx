@@ -23,6 +23,92 @@ interface ConfigPanelProps {
 export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const [questionsList, setQuestionsList] = useState<Question[]>(() => [...QUESTIONS]);
   
+  // Authentication states
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('bh_admin_auth') === 'true';
+    }
+    return false;
+  });
+  const [authError, setAuthError] = useState(false);
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'british2026') {
+      sessionStorage.setItem('bh_admin_auth', 'true');
+      setIsAuthenticated(true);
+      setAuthError(false);
+    } else {
+      setAuthError(true);
+      setPassword('');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gaming-dark text-white flex items-center justify-center py-8 px-4 font-sans bg-union-jack-grid">
+        {/* Glow Effects */}
+        <div className="absolute top-[20%] left-[20%] w-[35vw] h-[35vw] rounded-full bg-[#1736D1]/20 blur-[130px] pointer-events-none -z-10 animate-pulse-glow" />
+        <div className="absolute bottom-[20%] right-[20%] w-[30vw] h-[30vw] rounded-full bg-[#4A2DCC]/15 blur-[120px] pointer-events-none -z-10" />
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-[#05144b]/80 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.4)] space-y-6 text-center relative z-10"
+        >
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] border border-[#FF1A3B]/20">
+              <svg className="w-6 h-6 fill-none stroke-current stroke-[2.5]" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h1 className="text-xl font-black uppercase tracking-tight text-glow-blue">Acceso Administrativo</h1>
+            <p className="text-xs text-slate-300">Ingresa la contraseña para configurar las preguntas de nivelación.</p>
+          </div>
+
+          <form onSubmit={handleLoginSubmit} className="space-y-4 text-left">
+            <div className="space-y-1">
+              <label className="block text-[10px] font-black uppercase text-white/50 tracking-wider">Contraseña</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#00B5F7] tracking-widest"
+              />
+            </div>
+
+            {authError && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                <span>Contraseña incorrecta. Inténtalo de nuevo.</span>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onBack}
+                className="flex-1 px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold uppercase transition-all cursor-pointer text-center"
+              >
+                Volver
+              </button>
+              <button
+                type="submit"
+                className="flex-1 bg-[#FF1A3B] hover:bg-[#E00F2E] text-white px-5 py-3 rounded-full text-xs font-black uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(255,26,59,0.3)] cursor-pointer text-center"
+              >
+                Ingresar
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+  
   // Filtering states
   const [levelFilter, setLevelFilter] = useState<string>('All');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
