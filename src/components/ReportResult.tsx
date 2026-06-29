@@ -389,7 +389,7 @@ export default function ReportResult({
             className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-all duration-200 cursor-pointer"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#0A2E9E]/20 text-[#FFC83D] border border-[#FFC83D]/30 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#0A2E9E]/20 text-[#FFC83D] border border-[#FFC83D]/30 flex items-center justify-center shrink-0">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
