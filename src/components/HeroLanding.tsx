@@ -43,7 +43,7 @@ export default function HeroLanding({
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-100px)] flex items-center justify-center py-10 px-4 md:px-8 overflow-hidden bg-union-jack-grid">
+    <div className="relative min-h-[calc(100vh-100px)] flex items-center justify-center py-10 px-4 md:px-8 overflow-x-hidden bg-union-jack-grid">
       
       {/* Immersive background light leaks and glows */}
       <div className="absolute top-[10%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-[#1736D1]/20 blur-[130px] pointer-events-none -z-10 animate-pulse-glow" />
@@ -168,7 +168,7 @@ export default function HeroLanding({
           className="lg:col-span-5 flex items-center justify-center relative mt-10 lg:mt-0"
         >
           {/* Main 3D Mascot Lion */}
-          <div className="relative w-full max-w-md mx-auto min-h-[450px] md:min-h-[520px] flex items-center justify-center">
+          <div className="relative w-full max-w-md mx-auto min-h-[380px] md:min-h-[460px] flex items-center justify-center">
             <MascotLion
               state="welcome"
               className="w-full h-auto animate-float-slow object-contain"

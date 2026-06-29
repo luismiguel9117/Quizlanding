@@ -173,7 +173,7 @@ export default function MascotLion({
           alt={altText}
           className={`object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.45)] transition-all duration-500 hover:scale-[1.03] select-none ${
             state === 'welcome' 
-              ? 'w-72 md:w-[24rem] h-auto' 
+              ? 'w-64 md:w-[20rem] lg:w-[22rem] h-auto' 
               : state === 'success' 
               ? 'w-48 md:w-56 h-auto' 
               : state.startsWith('quiz_')
