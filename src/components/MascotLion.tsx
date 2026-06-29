@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 interface MascotLionProps {
-  state?: 'welcome' | 'thinking' | 'encouraging' | 'success' | 'sample';
+  state?: 'welcome' | 'thinking' | 'encouraging' | 'success' | 'sample' | 'quiz_thinking' | 'quiz_pointer' | 'quiz_presenter';
   speechBubbleText?: string;
   className?: string;
 }
@@ -14,6 +14,33 @@ export default function MascotLion({
   // Determine image and sizing based on state
   const { imageSrc, altText, showBubble, showStatus, statusLabel, defaultBubbleText } = useMemo(() => {
     switch (state) {
+      case 'quiz_thinking':
+        return {
+          imageSrc: '/assets/images/lion_quiz_thoughtful.png',
+          altText: 'Leo el León pensando',
+          showBubble: true,
+          showStatus: false,
+          statusLabel: '',
+          defaultBubbleText: 'Lee la pregunta con atención... 🤔',
+        };
+      case 'quiz_pointer':
+        return {
+          imageSrc: '/assets/images/lion_quiz_pointer.png',
+          altText: 'Leo el León apuntando',
+          showBubble: true,
+          showStatus: false,
+          statusLabel: '',
+          defaultBubbleText: '¡Buena elección! ¿Listo para la siguiente? 👉',
+        };
+      case 'quiz_presenter':
+        return {
+          imageSrc: '/assets/images/lion_quiz_presenter.png',
+          altText: 'Leo el León explicando',
+          showBubble: true,
+          showStatus: false,
+          statusLabel: '',
+          defaultBubbleText: '¡Excelente! Continuemos con paso firme 📚',
+        };
       case 'thinking':
         return {
           imageSrc: '/assets/images/lion_pre.png',
@@ -140,7 +167,13 @@ export default function MascotLion({
           src={imageSrc}
           alt={altText}
           className={`h-auto object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.45)] transition-all duration-500 hover:scale-[1.03] select-none ${
-            state === 'welcome' ? 'w-72 md:w-[24rem]' : state === 'success' ? 'w-36 md:w-44' : 'w-32'
+            state === 'welcome' 
+              ? 'w-72 md:w-[24rem]' 
+              : state === 'success' 
+              ? 'w-48 md:w-56' 
+              : state.startsWith('quiz_')
+              ? 'w-36 md:w-44 lg:w-48'
+              : 'w-32'
           }`}
         />
       </div>

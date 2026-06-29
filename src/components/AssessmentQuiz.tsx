@@ -449,7 +449,13 @@ export default function AssessmentQuiz({
         <div className="lg:col-span-4 flex flex-col items-center justify-center">
           <div className="w-full flex justify-center items-center h-full max-w-sm">
             <MascotLion
-              state="encouraging"
+              state={
+                selectedAnswers[currentQuestion.id] === undefined
+                  ? 'quiz_thinking'
+                  : currentIndex % 2 === 0
+                  ? 'quiz_pointer'
+                  : 'quiz_presenter'
+              }
               speechBubbleText={mascotRemark}
               className="w-full"
             />
