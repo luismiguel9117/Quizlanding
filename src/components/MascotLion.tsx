@@ -172,7 +172,7 @@ export default function MascotLion({
               : state === 'success' 
               ? 'w-48 md:w-56 h-auto' 
               : state.startsWith('quiz_')
-              ? 'h-64 md:h-80 lg:h-[22rem] w-auto'
+              ? 'h-72 md:h-96 lg:h-[27rem] w-auto'
               : 'w-32 h-auto'
           }`}
         />
