@@ -5,7 +5,7 @@
 
 import { Question, LevelDetails, EnglishLevelKey } from '../types';
 
-export const QUESTIONS: Question[] = [
+const DEFAULT_QUESTIONS: Question[] = [
   // --- A1 LEVEL (Questions 1 - 3) ---
   {
     id: 1,
@@ -213,6 +213,36 @@ export const QUESTIONS: Question[] = [
     explanation: 'This refers to an unfulfilled hypothetical past condition (Third Conditional) where "otherwise" replaces an "if" clause (e.g., "if I had heard it").'
   }
 ];
+
+// Helper to get questions from localStorage:
+const getQuestionsFromStorage = (): Question[] => {
+  if (typeof window === 'undefined') return DEFAULT_QUESTIONS;
+  const stored = localStorage.getItem('bh_quiz_questions');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to parse stored questions, falling back to default", e);
+    }
+  }
+  return DEFAULT_QUESTIONS;
+};
+
+// Exported mutable array
+export let QUESTIONS: Question[] = getQuestionsFromStorage();
+
+// Helper to save questions and sync the exported array in-place:
+export const saveQuestions = (newQuestions: Question[]) => {
+  localStorage.setItem('bh_quiz_questions', JSON.stringify(newQuestions));
+  // Update QUESTIONS array in place so imports in other files get the updates:
+  QUESTIONS.length = 0;
+  QUESTIONS.push(...newQuestions);
+};
+
+// Helper to reset to default:
+export const resetQuestions = () => {
+  saveQuestions(DEFAULT_QUESTIONS);
+};
 
 export const LEVEL_DETAILS: Record<EnglishLevelKey, LevelDetails> = {
   A1: {

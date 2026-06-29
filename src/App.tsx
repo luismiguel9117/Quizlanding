@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Shield, Mail, Globe, HelpCircle, Phone, Award, Star } from 'lucide-react';
 import HeroLanding from './components/HeroLanding';
 import AssessmentQuiz from './components/AssessmentQuiz';
 import ReportResult from './components/ReportResult';
+import ConfigPanel from './components/ConfigPanel';
 
-type ScreenState = 'landing' | 'quiz' | 'result';
+type ScreenState = 'landing' | 'quiz' | 'result' | 'config';
 
 interface QuizResponse {
   questionId: number;
@@ -18,7 +19,12 @@ interface QuizResponse {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<ScreenState>('landing');
+  const [screen, setScreen] = useState<ScreenState>(() => {
+    if (typeof window !== 'undefined' && window.location.pathname === '/config') {
+      return 'config';
+    }
+    return 'landing';
+  });
   const [responses, setResponses] = useState<QuizResponse[]>([]);
 
   // Action to launch a fresh exam
@@ -66,11 +72,36 @@ export default function App() {
     setScreen('landing');
   }, []);
 
+  const handleBackFromConfig = useCallback(() => {
+    window.history.pushState({}, '', '/');
+    setScreen('landing');
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (window.location.pathname === '/config') {
+        setScreen('config');
+      } else if (screen === 'config') {
+        setScreen('landing');
+      }
+    };
+    
+    if (window.location.pathname === '/config' && screen !== 'config') {
+      setScreen('config');
+    } else if (window.location.pathname !== '/config' && screen === 'config') {
+      setScreen('landing');
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [screen]);
+
   return (
     <div className="min-h-screen bg-gaming-dark text-white flex flex-col font-sans selection:bg-[#FFC83D] selection:text-[#020925]">
       
       {/* BRAND GLASS HEADER BAR */}
-      <div className="sticky top-0 z-50 w-full px-4 md:px-8 py-3.5 pointer-events-none">
+      {screen !== 'config' && (
+        <div className="sticky top-0 z-50 w-full px-4 md:px-8 py-3.5 pointer-events-none">
         <header className="w-full max-w-7xl mx-auto bg-white rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.15)] px-6 py-2.5 flex items-center justify-between pointer-events-auto border border-slate-100">
           
           {/* Logo Brand container */}
@@ -111,6 +142,7 @@ export default function App() {
 
         </header>
       </div>
+      )}
 
       {/* CORE SCREEN SWITCHBOARD */}
       <main className="flex-grow">
@@ -134,13 +166,20 @@ export default function App() {
             onRestart={handleRestart}
           />
         )}
+
+        {screen === 'config' && (
+          <ConfigPanel
+            onBack={handleBackFromConfig}
+          />
+        )}
       </main>
 
       {/* FOOTER */}
-      <footer 
-        className="bg-[#0A2E9E] text-white font-sans border-t border-white/10 relative z-10 py-12 px-4 md:px-8 bg-cover bg-center bg-no-repeat rounded-t-[40px] md:rounded-t-[48px] overflow-hidden"
-        style={{ backgroundImage: "url('/assets/images/footer_bg.png')" }}
-      >
+      {screen !== 'config' && (
+        <footer 
+          className="bg-[#0A2E9E] text-white font-sans border-t border-white/10 relative z-10 py-12 px-4 md:px-8 bg-cover bg-center bg-no-repeat rounded-t-[40px] md:rounded-t-[48px] overflow-hidden"
+          style={{ backgroundImage: "url('/assets/images/footer_bg.png')" }}
+        >
         <div className="w-full max-w-7xl mx-auto space-y-10">
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
@@ -281,6 +320,7 @@ export default function App() {
 
         </div>
       </footer>
+      )}
     </div>
   );
 }
