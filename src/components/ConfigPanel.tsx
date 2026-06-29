@@ -47,6 +47,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
 
   // JSON Import/Export states
   const [isJsonCardOpen, setIsJsonCardOpen] = useState(false);
+  const [isScoringCardOpen, setIsScoringCardOpen] = useState(true);
   const [jsonInput, setJsonInput] = useState('');
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [jsonSuccess, setJsonSuccess] = useState(false);
@@ -71,6 +72,27 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     });
     return counts;
   }, [questionsList]);
+
+  // Dynamic scoring summary
+  const scoringSummary = useMemo(() => {
+    let totalPoints = 0;
+    const levelWeights: Record<string, number> = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+    const summary = Object.entries(statsByLevel).map(([lvl, count]) => {
+      const weight = levelWeights[lvl] || 1;
+      const subtotal = Number(count) * weight;
+      totalPoints += subtotal;
+      return {
+        level: lvl,
+        count: Number(count),
+        weight,
+        subtotal
+      };
+    });
+    return {
+      summary,
+      totalPoints
+    };
+  }, [statsByLevel]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,6 +341,71 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
               <span className="text-[10px] text-white/40">preguntas</span>
             </div>
           ))}
+        </div>
+
+        {/* Collapsible Scoring Info */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+          <button 
+            onClick={() => setIsScoringCardOpen(!isScoringCardOpen)}
+            className="w-full flex items-center justify-between px-6 py-4 font-bold text-sm tracking-wider uppercase border-b border-white/5 bg-white/[0.02] cursor-pointer"
+          >
+            <span>Estructura de Puntuación Ponderada</span>
+            <span className="text-xs">{isScoringCardOpen ? '▲ Ocultar' : '▼ Mostrar'}</span>
+          </button>
+
+          {isScoringCardOpen && (
+            <div className="p-6 space-y-4 text-left">
+              <p className="text-xs text-white/70">
+                Cada pregunta otorga puntos según su dificultad (nivel del MCER). El nivel estimado final se calcula en base al porcentaje obtenido sobre el puntaje máximo total.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Points Table */}
+                <div className="md:col-span-2 overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-white/50 uppercase font-black tracking-wider">
+                        <th className="py-2.5">Nivel</th>
+                        <th className="py-2.5 text-center">Peso por Pregunta</th>
+                        <th className="py-2.5 text-center">Cantidad Actual</th>
+                        <th className="py-2.5 text-right">Subtotal Puntos</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {scoringSummary.summary.map((row) => (
+                        <tr key={row.level} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3 font-extrabold text-[#00B5F7] font-mono">{row.level}</td>
+                          <td className="py-3 text-center font-bold">{row.weight} {row.weight === 1 ? 'punto' : 'puntos'}</td>
+                          <td className="py-3 text-center text-white/80">{row.count} {row.count === 1 ? 'pregunta' : 'preguntas'}</td>
+                          <td className="py-3 text-right font-black text-white/90">{row.subtotal} pts</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Score Summary Box */}
+                <div className="bg-[#0A2E9E]/20 border border-[#00B5F7]/30 rounded-2xl p-5 flex flex-col justify-between items-center text-center">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black uppercase text-[#00B5F7] tracking-widest font-mono">
+                      Puntaje Máximo Total
+                    </span>
+                    <p className="text-4xl md:text-5xl font-black text-[#00B5F7] my-2">
+                      {scoringSummary.totalPoints}
+                    </p>
+                    <span className="text-xs text-white/70 block">
+                      puntos en total
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-white/40 mt-4 border-t border-white/10 pt-3 w-full">
+                    Ajustado automáticamente al añadir o eliminar preguntas.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Collapsible JSON Import/Export */}
