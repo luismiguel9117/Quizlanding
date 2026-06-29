@@ -130,12 +130,17 @@ export default function MascotLion({
           </div>
 
           {/* Cambridge Badge - Mid Right */}
-          <div className="absolute top-[30%] -right-[8%] z-20 animate-float-fast select-none">
-            <img 
-              src="/assets/images/badge_cambridge.png" 
-              alt="Cambridge English Prep" 
-              className="w-20 md:w-24 h-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
-            />
+          <div className="absolute top-[30%] -right-[15%] md:-right-[20%] z-20 animate-float-fast select-none">
+            <div className="bg-white text-slate-800 py-1.5 px-3 rounded-2xl shadow-lg border border-slate-100 flex items-center gap-2 max-w-[130px] md:max-w-[160px] rotate-6">
+              <img 
+                src="/assets/images/badge_cambridge.png" 
+                alt="Cambridge Shield" 
+                className="w-7 h-7 object-contain shrink-0"
+              />
+              <span className="text-[8px] md:text-[9px] font-extrabold leading-snug font-sans text-left">
+                Somos un Centro Preparador Cambridge
+              </span>
+            </div>
           </div>
 
           {/* UK Flag - Bottom Right */}

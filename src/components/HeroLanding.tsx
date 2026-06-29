@@ -107,10 +107,10 @@ export default function HeroLanding({
 
               {/* Card 4 */}
               <div className="bg-white text-slate-800 p-3 rounded-xl shadow-md flex items-center gap-3 border border-slate-100 text-xs md:text-sm font-semibold">
-                <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/5 flex items-center justify-center shrink-0">
-                  <img src="/assets/images/badge_cambridge.png" alt="Cambridge Shield" className="w-6 h-6 object-contain" />
+                <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] shrink-0">
+                  <Award className="w-4.5 h-4.5" />
                 </div>
-                <span>Somos un Centro Preparador Cambridge</span>
+                <span>Certificación de nivel estimada</span>
               </div>
             </div>
           </motion.div>
