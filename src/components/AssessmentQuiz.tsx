@@ -228,37 +228,37 @@ export default function AssessmentQuiz({
     ];
 
     return (
-      <div className="min-h-[calc(100vh-80px)] bg-[#020925] bg-union-jack-grid flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-[calc(100vh-80px)] bg-[#020925] bg-union-jack-grid flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-80 h-80 rounded-full bg-[#4A2DCC]/20 blur-[100px] animate-pulse-glow" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-[#0A2E9E]/20 blur-[100px]" />
 
-        <div className="w-full max-w-lg bg-[#05144b]/80 backdrop-blur-xl p-8 rounded-[32px] border border-white/10 text-center flex flex-col items-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative z-10">
-          <MascotLion state="success" className="w-48 md:w-56 h-auto mb-6" />
+        <div className="w-full max-w-md sm:max-w-lg bg-[#05144b]/80 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-[32px] border border-white/10 text-center flex flex-col items-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative z-10">
+          <MascotLion state="success" className="w-36 sm:w-48 md:w-56 h-auto mb-4 md:mb-6" />
           
-          <div className="relative flex items-center justify-center w-12 h-12 bg-[#0A2E9E]/20 text-[#FFC83D] rounded-full mb-4 shadow-[0_0_15px_rgba(255,200,61,0.3)] border border-[#FFC83D]/30">
-            <Loader2 className="w-6 h-6 animate-spin text-[#FFC83D]" />
+          <div className="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 bg-[#0A2E9E]/20 text-[#FFC83D] rounded-full mb-3 sm:mb-4 shadow-[0_0_15px_rgba(255,200,61,0.3)] border border-[#FFC83D]/30">
+            <Loader2 className="w-5.5 h-5.5 sm:w-6 sm:h-6 animate-spin text-[#FFC83D]" />
           </div>
 
-          <h3 className="text-xl md:text-2xl font-sans font-black text-white tracking-wide uppercase mb-1">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-sans font-black text-white tracking-wide uppercase mb-1">
             Analizando tu Rendimiento
           </h3>
-          <p className="text-[10px] font-mono text-[#FFC83D] uppercase tracking-widest mb-6">
+          <p className="text-[9px] sm:text-[10px] font-mono text-[#FFC83D] uppercase tracking-widest mb-4 sm:mb-6">
             Estableciendo tu perfil de nivel MCER...
           </p>
 
-          <div className="w-full space-y-3.5 bg-[#020925]/60 p-5 rounded-2xl border border-white/5">
+          <div className="w-full space-y-2.5 sm:space-y-3.5 bg-[#020925]/60 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-white/5">
             {steps.map((stepMessage, idx) => {
               const isDone = finishingStep > idx;
               const isActive = finishingStep === idx;
               return (
                 <div
                   key={idx}
-                  className={`flex items-center gap-3 text-left transition-all duration-300 ${
+                  className={`flex items-center gap-2.5 sm:gap-3 text-left transition-all duration-300 ${
                     isDone ? 'opacity-40 scale-95' : isActive ? 'opacity-100 scale-100' : 'opacity-15 scale-95'
                   }`}
                 >
                   <div
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black transition-all duration-300 border ${
+                    className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[10px] sm:text-xs font-black transition-all duration-300 border shrink-0 ${
                       isDone
                         ? 'bg-[#FFC83D]/20 border-[#FFC83D]/40 text-[#FFC83D]'
                         : isActive
@@ -269,7 +269,7 @@ export default function AssessmentQuiz({
                     {isDone ? '✓' : idx + 1}
                   </div>
                   <span
-                    className={`text-[11px] font-sans font-bold transition-colors duration-300 ${
+                    className={`text-[10px] sm:text-[11px] font-sans font-bold transition-colors duration-300 ${
                       isActive ? 'text-[#FFC83D]' : 'text-slate-300'
                     }`}
                   >
