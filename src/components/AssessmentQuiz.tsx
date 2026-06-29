@@ -233,7 +233,7 @@ export default function AssessmentQuiz({
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-[#0A2E9E]/20 blur-[100px]" />
 
         <div className="w-full max-w-lg bg-[#05144b]/80 backdrop-blur-xl p-8 rounded-[32px] border border-white/10 text-center flex flex-col items-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative z-10">
-          <MascotLion state="success" className="w-36 h-36 mb-4" />
+          <MascotLion state="success" className="w-48 md:w-56 h-auto mb-6" />
           
           <div className="relative flex items-center justify-center w-12 h-12 bg-[#0A2E9E]/20 text-[#FFC83D] rounded-full mb-4 shadow-[0_0_15px_rgba(255,200,61,0.3)] border border-[#FFC83D]/30">
             <Loader2 className="w-6 h-6 animate-spin text-[#FFC83D]" />
