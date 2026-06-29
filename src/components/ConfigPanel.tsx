@@ -13,7 +13,7 @@ import {
   HelpCircle,
   AlertCircle
 } from 'lucide-react';
-import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights } from '../data/questions';
+import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights, getLevelThresholds, saveLevelThresholds, LevelThresholds } from '../data/questions';
 import { Question } from '../types';
 
 interface ConfigPanelProps {
@@ -66,6 +66,21 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     saveLevelWeights(updatedWeights as any);
   };
 
+  // Level thresholds state
+  const [levelThresholds, setLevelThresholds] = useState<LevelThresholds>(() => getLevelThresholds());
+  const [isThresholdsCardOpen, setIsThresholdsCardOpen] = useState(true);
+
+  const handleThresholdChange = (lvl: keyof LevelThresholds, newPctStr: string) => {
+    const pctVal = parseInt(newPctStr, 10);
+    const val = isNaN(pctVal) ? 0 : Math.max(0, Math.min(100, pctVal));
+    const updated = {
+      ...levelThresholds,
+      [lvl]: val
+    };
+    setLevelThresholds(updated);
+    saveLevelThresholds(updated);
+  };
+
   // Filtered list calculation
   const filteredQuestions = useMemo(() => {
     return questionsList.filter(q => {
@@ -106,6 +121,27 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       totalPoints
     };
   }, [statsByLevel, levelWeights]);
+
+  // Dynamic threshold points ranges summary
+  const thresholdSummary = useMemo(() => {
+    const T = scoringSummary.totalPoints;
+    
+    // Lower bounds in points (rounded)
+    const ptC2 = Math.round((levelThresholds.C2 / 100) * T);
+    const ptC1 = Math.round((levelThresholds.C1 / 100) * T);
+    const ptB2 = Math.round((levelThresholds.B2 / 100) * T);
+    const ptB1 = Math.round((levelThresholds.B1 / 100) * T);
+    const ptA2 = Math.round((levelThresholds.A2 / 100) * T);
+    
+    return [
+      { level: 'C2', minPct: levelThresholds.C2, maxPct: 100, minPt: ptC2, maxPt: T },
+      { level: 'C1', minPct: levelThresholds.C1, maxPct: levelThresholds.C2 - 1, minPt: ptC1, maxPt: Math.max(0, ptC2 - 1) },
+      { level: 'B2', minPct: levelThresholds.B2, maxPct: levelThresholds.C1 - 1, minPt: ptB2, maxPt: Math.max(0, ptC1 - 1) },
+      { level: 'B1', minPct: levelThresholds.B1, maxPct: levelThresholds.B2 - 1, minPt: ptB1, maxPt: Math.max(0, ptB2 - 1) },
+      { level: 'A2', minPct: levelThresholds.A2, maxPct: levelThresholds.B1 - 1, minPt: ptA2, maxPt: Math.max(0, ptB1 - 1) },
+      { level: 'A1', minPct: 0, maxPct: levelThresholds.A2 - 1, minPt: 0, maxPt: Math.max(0, ptA2 - 1) },
+    ];
+  }, [levelThresholds, scoringSummary.totalPoints]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,6 +303,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       resetQuestions();
       setQuestionsList([...QUESTIONS]);
       setLevelWeights({ A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 });
+      setLevelThresholds({ A2: 13, B1: 27, B2: 47, C1: 70, C2: 87 });
     }
   };
 
@@ -426,6 +463,80 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                   </div>
                 </div>
 
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Collapsible Thresholds Scale Info */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+          <button 
+            onClick={() => setIsThresholdsCardOpen(!isThresholdsCardOpen)}
+            className="w-full flex items-center justify-between px-6 py-4 font-bold text-sm tracking-wider uppercase border-b border-white/5 bg-white/[0.02] cursor-pointer"
+          >
+            <span>Escala de Niveles y Límites de Puntaje (MCER)</span>
+            <span className="text-xs">{isThresholdsCardOpen ? '▲ Ocultar' : '▼ Mostrar'}</span>
+          </button>
+
+          {isThresholdsCardOpen && (
+            <div className="p-6 space-y-4 text-left">
+              <p className="text-xs text-white/70">
+                Define el porcentaje mínimo requerido para obtener cada nivel de inglés. El sistema calculará automáticamente los rangos de puntos en base al puntaje total actual del examen.
+              </p>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-white/10 text-white/50 uppercase font-black tracking-wider">
+                      <th className="py-2.5">Nivel</th>
+                      <th className="py-2.5 text-center">Porcentaje Mínimo Requerido</th>
+                      <th className="py-2.5 text-center">Rango Porcentual</th>
+                      <th className="py-2.5 text-right">Rango de Puntos Equivalente</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {thresholdSummary.map((row) => (
+                      <tr key={row.level} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="py-3 font-extrabold text-[#00B5F7] font-mono">{row.level}</td>
+                        <td className="py-1.5 text-center">
+                          {row.level === 'A1' ? (
+                            <span className="text-white/40 italic">Nivel base</span>
+                          ) : (
+                            <div className="flex items-center justify-center gap-1">
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={row.minPct}
+                                onChange={(e) => handleThresholdChange(row.level as keyof LevelThresholds, e.target.value)}
+                                className="w-16 bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-center focus:outline-none focus:border-[#00B5F7] font-bold text-white cursor-pointer"
+                              />
+                              <span className="text-white/60 font-bold">%</span>
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3 text-center text-white/80">
+                          {row.level === 'C2' ? (
+                            <span>&ge; {row.minPct}%</span>
+                          ) : row.level === 'A1' ? (
+                            <span>&lt; {row.maxPct + 1}%</span>
+                          ) : (
+                            <span>{row.minPct}% a {row.maxPct}%</span>
+                          )}
+                        </td>
+                        <td className="py-3 text-right font-black text-white/90">
+                          {row.level === 'C2' ? (
+                            <span>&ge; {row.minPt} pts</span>
+                          ) : row.level === 'A1' ? (
+                            <span>0 a {row.maxPt} pts</span>
+                          ) : (
+                            <span>{row.minPt} a {row.maxPt} pts</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

@@ -286,10 +286,47 @@ export const saveLevelWeights = (weights: Record<EnglishLevelKey, number>) => {
   localStorage.setItem('bh_quiz_weights', JSON.stringify(weights));
 };
 
+export interface LevelThresholds {
+  A2: number;
+  B1: number;
+  B2: number;
+  C1: number;
+  C2: number;
+}
+
+// Helper to get level percentage thresholds from localStorage:
+export const getLevelThresholds = (): LevelThresholds => {
+  if (typeof window === 'undefined') return { A2: 13, B1: 27, B2: 47, C1: 70, C2: 87 };
+  const stored = localStorage.getItem('bh_quiz_thresholds');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed && typeof parsed === 'object') {
+        return {
+          A2: typeof parsed.A2 === 'number' ? parsed.A2 : 13,
+          B1: typeof parsed.B1 === 'number' ? parsed.B1 : 27,
+          B2: typeof parsed.B2 === 'number' ? parsed.B2 : 47,
+          C1: typeof parsed.C1 === 'number' ? parsed.C1 : 70,
+          C2: typeof parsed.C2 === 'number' ? parsed.C2 : 87,
+        };
+      }
+    } catch (e) {
+      console.error("Failed to parse thresholds", e);
+    }
+  }
+  return { A2: 13, B1: 27, B2: 47, C1: 70, C2: 87 };
+};
+
+// Helper to save thresholds:
+export const saveLevelThresholds = (thresholds: LevelThresholds) => {
+  localStorage.setItem('bh_quiz_thresholds', JSON.stringify(thresholds));
+};
+
 // Helper to reset to default:
 export const resetQuestions = () => {
   saveQuestions(DEFAULT_QUESTIONS);
   localStorage.removeItem('bh_quiz_weights');
+  localStorage.removeItem('bh_quiz_thresholds');
 };
 
 export const LEVEL_DETAILS: Record<EnglishLevelKey, LevelDetails> = {

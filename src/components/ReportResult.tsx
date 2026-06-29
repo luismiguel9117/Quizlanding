@@ -12,7 +12,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { EnglishLevelKey } from '../types';
-import { QUESTIONS, LEVEL_DETAILS, getLevelWeights } from '../data/questions';
+import { QUESTIONS, LEVEL_DETAILS, getLevelWeights, getLevelThresholds } from '../data/questions';
 import MascotLion from './MascotLion';
 import BookingForm from './BookingForm';
 
@@ -53,12 +53,13 @@ export default function ReportResult({
 
     // Match CEFR level key based on dynamic percentage thresholds
     const percentage = totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
+    const thresholds = getLevelThresholds();
     let levelKey: EnglishLevelKey = 'B1'; // Default / base
-    if (percentage >= 87) levelKey = 'C2';
-    else if (percentage >= 70) levelKey = 'C1';
-    else if (percentage >= 47) levelKey = 'B2';
-    else if (percentage >= 27) levelKey = 'B1';
-    else if (percentage >= 13) levelKey = 'A2';
+    if (percentage >= thresholds.C2) levelKey = 'C2';
+    else if (percentage >= thresholds.C1) levelKey = 'C1';
+    else if (percentage >= thresholds.B2) levelKey = 'B2';
+    else if (percentage >= thresholds.B1) levelKey = 'B1';
+    else if (percentage >= thresholds.A2) levelKey = 'A2';
     else levelKey = 'A1';
 
     return {
