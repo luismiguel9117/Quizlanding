@@ -34,14 +34,14 @@
   background: #FFC83D;
 }
 
-/* Vibrant and Premium British House Backdrop Glows */
-.bg-gaming-dark {
+body {
   position: relative;
-  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%);
-  z-index: 0;
+  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%) no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
 }
 
-.bg-gaming-dark::before {
+body::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -50,23 +50,15 @@
   opacity: 0.15;
   z-index: -1;
   pointer-events: none;
+}
+
+/* Vibrant and Premium British House Backdrop Glows */
+.bg-gaming-dark {
+  /* Inherited from body */
 }
 
 .bg-gaming-mesh {
-  position: relative;
-  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%);
-  z-index: 0;
-}
-
-.bg-gaming-mesh::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: url('/assets/images/study_background.jpg') no-repeat center center;
-  background-size: cover;
-  opacity: 0.15;
-  z-index: -1;
-  pointer-events: none;
+  /* Inherited from body */
 }
 
 /* Subtle British pattern textures overlayed in background CSS */
