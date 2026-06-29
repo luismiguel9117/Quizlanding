@@ -12,7 +12,7 @@ import {
   Volume2
 } from 'lucide-react';
 import { EnglishLevelKey } from '../types';
-import { QUESTIONS, LEVEL_DETAILS } from '../data/questions';
+import { QUESTIONS, LEVEL_DETAILS, getLevelWeights } from '../data/questions';
 import MascotLion from './MascotLion';
 import BookingForm from './BookingForm';
 
@@ -36,18 +36,13 @@ export default function ReportResult({
     let totalPoints = 0;
     let earnedPoints = 0;
     let correctCount = 0;
+    const weights = getLevelWeights();
 
     responses.forEach((resp) => {
       const q = QUESTIONS.find((item) => item.id === resp.questionId);
       if (!q) return;
 
-      let weight = 1;
-      if (q.level === 'A1') weight = 1;
-      else if (q.level === 'A2') weight = 2;
-      else if (q.level === 'B1') weight = 3;
-      else if (q.level === 'B2') weight = 4;
-      else if (q.level === 'C1') weight = 5;
-      else if (q.level === 'C2') weight = 6;
+      const weight = weights[q.level] || 1;
 
       totalPoints += weight;
       if (resp.isCorrect) {
@@ -56,19 +51,20 @@ export default function ReportResult({
       }
     });
 
-    // Match CEFR level key based on points thresholds
+    // Match CEFR level key based on dynamic percentage thresholds
+    const percentage = totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
     let levelKey: EnglishLevelKey = 'B1'; // Default / base
-    if (earnedPoints >= 61) levelKey = 'C2';
-    else if (earnedPoints >= 49) levelKey = 'C1';
-    else if (earnedPoints >= 33) levelKey = 'B2';
-    else if (earnedPoints >= 19) levelKey = 'B1';
-    else if (earnedPoints >= 9) levelKey = 'A2';
+    if (percentage >= 87) levelKey = 'C2';
+    else if (percentage >= 70) levelKey = 'C1';
+    else if (percentage >= 47) levelKey = 'B2';
+    else if (percentage >= 27) levelKey = 'B1';
+    else if (percentage >= 13) levelKey = 'A2';
     else levelKey = 'A1';
 
     return {
       earnedPoints,
       totalPoints,
-      percentage: Math.round((earnedPoints / totalPoints) * 100),
+      percentage: Math.round(percentage),
       correctCount,
       levelKey,
     };

@@ -13,7 +13,7 @@ import {
   HelpCircle,
   AlertCircle
 } from 'lucide-react';
-import { QUESTIONS, saveQuestions, resetQuestions } from '../data/questions';
+import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights } from '../data/questions';
 import { Question } from '../types';
 
 interface ConfigPanelProps {
@@ -52,6 +52,20 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [jsonSuccess, setJsonSuccess] = useState(false);
 
+  // Level weights state
+  const [levelWeights, setLevelWeights] = useState<Record<string, number>>(() => getLevelWeights());
+
+  const handleWeightChange = (lvl: string, newWeightStr: string) => {
+    const weightVal = parseInt(newWeightStr, 10);
+    const val = isNaN(weightVal) ? 0 : Math.max(0, weightVal);
+    const updatedWeights = {
+      ...levelWeights,
+      [lvl]: val
+    };
+    setLevelWeights(updatedWeights);
+    saveLevelWeights(updatedWeights as any);
+  };
+
   // Filtered list calculation
   const filteredQuestions = useMemo(() => {
     return questionsList.filter(q => {
@@ -76,9 +90,8 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   // Dynamic scoring summary
   const scoringSummary = useMemo(() => {
     let totalPoints = 0;
-    const levelWeights: Record<string, number> = { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
     const summary = Object.entries(statsByLevel).map(([lvl, count]) => {
-      const weight = levelWeights[lvl] || 1;
+      const weight = levelWeights[lvl] !== undefined ? levelWeights[lvl] : 1;
       const subtotal = Number(count) * weight;
       totalPoints += subtotal;
       return {
@@ -92,7 +105,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       summary,
       totalPoints
     };
-  }, [statsByLevel]);
+  }, [statsByLevel, levelWeights]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,6 +266,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     if (window.confirm('¿Desea restaurar las 20 preguntas originales? Se perderán todos los cambios personalizados.')) {
       resetQuestions();
       setQuestionsList([...QUESTIONS]);
+      setLevelWeights({ A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 });
     }
   };
 
@@ -376,7 +390,16 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                       {scoringSummary.summary.map((row) => (
                         <tr key={row.level} className="hover:bg-white/[0.02] transition-colors">
                           <td className="py-3 font-extrabold text-[#00B5F7] font-mono">{row.level}</td>
-                          <td className="py-3 text-center font-bold">{row.weight} {row.weight === 1 ? 'punto' : 'puntos'}</td>
+                          <td className="py-1.5 text-center">
+                            <input
+                              type="number"
+                              min="0"
+                              max="99"
+                              value={row.weight}
+                              onChange={(e) => handleWeightChange(row.level, e.target.value)}
+                              className="w-16 bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-center focus:outline-none focus:border-[#00B5F7] font-bold text-white cursor-pointer"
+                            />
+                          </td>
                           <td className="py-3 text-center text-white/80">{row.count} {row.count === 1 ? 'pregunta' : 'preguntas'}</td>
                           <td className="py-3 text-right font-black text-white/90">{row.subtotal} pts</td>
                         </tr>

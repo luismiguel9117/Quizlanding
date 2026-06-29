@@ -256,9 +256,40 @@ export const saveQuestions = (newQuestions: Question[]) => {
   QUESTIONS.push(...newQuestions);
 };
 
+// Helper to get level weights from localStorage:
+export const getLevelWeights = (): Record<EnglishLevelKey, number> => {
+  if (typeof window === 'undefined') return { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+  const stored = localStorage.getItem('bh_quiz_weights');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed && typeof parsed === 'object') {
+        const validated: any = {};
+        let hasKeys = false;
+        (['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as EnglishLevelKey[]).forEach(k => {
+          if (typeof parsed[k] === 'number') {
+            validated[k] = parsed[k];
+            hasKeys = true;
+          }
+        });
+        if (hasKeys) return validated;
+      }
+    } catch (e) {
+      console.error("Failed to parse weights", e);
+    }
+  }
+  return { A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 };
+};
+
+// Helper to save weights:
+export const saveLevelWeights = (weights: Record<EnglishLevelKey, number>) => {
+  localStorage.setItem('bh_quiz_weights', JSON.stringify(weights));
+};
+
 // Helper to reset to default:
 export const resetQuestions = () => {
   saveQuestions(DEFAULT_QUESTIONS);
+  localStorage.removeItem('bh_quiz_weights');
 };
 
 export const LEVEL_DETAILS: Record<EnglishLevelKey, LevelDetails> = {
