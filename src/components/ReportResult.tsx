@@ -336,7 +336,7 @@ export default function ReportResult({
                 <img 
                   src="/assets/images/clipboard.png" 
                   alt="Checklist British House" 
-                  className="w-16 h-auto object-contain drop-shadow-md animate-float-medium"
+                  className="w-16 h-auto object-contain drop-shadow-md animate-float-medium scale-x-[-1]"
                 />
               </div>
             </div>
