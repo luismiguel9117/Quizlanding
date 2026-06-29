@@ -36,11 +36,17 @@
 
 /* Vibrant and Premium British House Backdrop Glows */
 .bg-gaming-dark {
-  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%);
+  background: 
+    radial-gradient(circle, rgba(0, 181, 247, 0.45) 0%, rgba(2, 9, 37, 0.9) 100%), 
+    url('/assets/images/study_background.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
 .bg-gaming-mesh {
-  background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%);
+  background: 
+    radial-gradient(circle, rgba(0, 181, 247, 0.45) 0%, rgba(2, 9, 37, 0.9) 100%), 
+    url('/assets/images/study_background.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
 /* Subtle British pattern textures overlayed in background CSS */
