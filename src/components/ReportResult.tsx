@@ -21,11 +21,13 @@ import BookingForm from './BookingForm';
 interface ReportResultProps {
   responses: { questionId: number; selectedOption: number; isCorrect: boolean }[];
   onRestart: () => void;
+  isExample?: boolean;
 }
 
 export default function ReportResult({
   responses,
   onRestart,
+  isExample = false,
 }: ReportResultProps) {
   const [showAnswerReview, setShowAnswerReview] = useState(false);
   const [bookingType, setBookingType] = useState<'info' | 'consultation'>('info');
@@ -383,7 +385,8 @@ export default function ReportResult({
         </div>
 
         {/* DETAILS OF EXPLAINED ANSWERS ACCORDION */}
-        <div className="bg-[#05144b]/50 backdrop-blur-md rounded-3xl border border-white/10 shadow-lg overflow-hidden text-left">
+        {!isExample && (
+          <div className="bg-[#05144b]/50 backdrop-blur-md rounded-3xl border border-white/10 shadow-lg overflow-hidden text-left">
           <button
             onClick={() => setShowAnswerReview(!showAnswerReview)}
             className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-all duration-200 cursor-pointer"
@@ -499,6 +502,7 @@ export default function ReportResult({
             </div>
           )}
         </div>
+        )}
 
       </div>
 

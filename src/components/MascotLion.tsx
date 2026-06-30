@@ -91,20 +91,20 @@ export default function MascotLion({
       {/* RENDER WELCOME BADGES ONLY IN WELCOME STATE */}
       {state === 'welcome' && (
         <>
-          {/* B1 Intermediate - Top Center-Left */}
+          {/* B2 Upper Intermediate - Top Center-Left */}
           <div className="absolute -top-[10%] left-[5%] z-20 animate-float-slow select-none">
             <img 
-              src="/assets/images/badge_b1.png" 
-              alt="B1 Intermediate" 
+              src="/assets/images/badge_b2.png" 
+              alt="B2 Upper Intermediate" 
               className="w-16 md:w-20 h-auto drop-shadow-[0_8px_16px_rgba(74,45,204,0.4)]"
             />
           </div>
 
-          {/* A2 Elementary - Mid Left */}
+          {/* A1 Beginner - Mid Left */}
           <div className="absolute top-[35%] -left-[2%] md:-left-[10%] z-20 animate-float-medium select-none">
             <img 
-              src="/assets/images/badge_a2.png" 
-              alt="A2 Elementary" 
+              src="/assets/images/badge_a1.png" 
+              alt="A1 Beginner" 
               className="w-14 md:w-16 h-auto drop-shadow-[0_8px_16px_rgba(10,46,158,0.4)]"
             />
           </div>

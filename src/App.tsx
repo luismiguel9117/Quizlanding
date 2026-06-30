@@ -26,10 +26,12 @@ export default function App() {
     return 'landing';
   });
   const [responses, setResponses] = useState<QuizResponse[]>([]);
+  const [isExampleReport, setIsExampleReport] = useState(false);
 
   // Action to launch a fresh exam
   const handleStartAssessment = useCallback(() => {
     setResponses([]);
+    setIsExampleReport(false);
     setScreen('quiz');
   }, []);
 
@@ -59,16 +61,19 @@ export default function App() {
     ];
 
     setResponses(sampleResponses);
+    setIsExampleReport(true);
     setScreen('result');
   }, []);
 
   const handleQuizComplete = useCallback((finalResponses: QuizResponse[]) => {
     setResponses(finalResponses);
+    setIsExampleReport(false);
     setScreen('result');
   }, []);
 
   const handleRestart = useCallback(() => {
     setResponses([]);
+    setIsExampleReport(false);
     setScreen('landing');
   }, []);
 
@@ -158,6 +163,7 @@ export default function App() {
           <ReportResult
             responses={responses}
             onRestart={handleRestart}
+            isExample={isExampleReport}
           />
         )}
 
