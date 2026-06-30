@@ -174,12 +174,7 @@ export default function HeroLanding({
               className="w-full h-auto animate-float-slow object-contain"
             />
 
-            {/* Floating Red Badge */}
-            <div className="absolute -top-4 -right-2 bg-[#FF1A3B] text-white p-2.5 md:p-4 rounded-2xl shadow-[0_10px_25px_rgba(255,26,59,0.4)] flex flex-col items-center justify-center text-center select-none w-22 h-22 md:w-28 md:h-28 rotate-12 animate-pulse-glow border border-white/10">
-              <span className="text-2xl md:text-3xl font-black leading-none">TEST</span>
-              <span className="text-[7.5px] md:text-[9px] font-black tracking-widest uppercase mt-0.5 md:mt-1">Activo Hoy</span>
-              <span className="text-xs mt-0.5 md:mt-1">⏱️</span>
-            </div>
+
 
             {/* Floating Blue Badge */}
             <div className="absolute -bottom-4 -left-2 bg-[#004BDC] text-white py-2 px-3.5 md:py-3 md:px-5 rounded-2xl shadow-[0_10px_25px_rgba(0,75,220,0.4)] flex flex-col items-start select-none rotate-[-6deg] border border-white/10">
