@@ -370,14 +370,16 @@ export default function ReportResult({
             </button>
 
             {/* Secondary WhatsApp purple button */}
-            <button
-              onClick={() => handleOpenBooking('consultation')}
-              className="py-3.5 px-6 bg-[#120b36] hover:bg-[#120b36]/80 text-white font-sans font-bold rounded-xl border border-white/15 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer text-xs"
+            <a
+              href={`https://wa.me/51978957849?text=Hola,%20acabo%20de%20completar%20el%20test%20de%20nivelaci%C3%B3n%20en%20l%C3%ADnea.%20Obtuve%20un%20nivel%20${scoreStats.levelKey}%20estimado%20y%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-3.5 px-6 bg-[#120b36] hover:bg-[#120b36]/80 text-white font-sans font-bold rounded-xl border border-white/15 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer text-xs text-center no-underline"
             >
               {/* Green WhatsApp fill icon */}
               <img src="/assets/images/whatsapp_green.svg" alt="WhatsApp" className="w-4 h-4 object-contain shrink-0" />
               <span>HABLAR CON UN ASESOR</span>
-            </button>
+            </a>
           </div>
         </div>
 
