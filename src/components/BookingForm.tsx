@@ -77,6 +77,24 @@ export default function BookingForm({
 
     setIsSubmitting(true);
 
+    try {
+      const stored = localStorage.getItem('bh_quiz_leads');
+      const leads = stored ? JSON.parse(stored) : [];
+      const newLead = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        preferredContact: formData.preferredContact,
+        estimatedLevel,
+        recommendedProgram,
+        submittedAt: new Date().toISOString()
+      };
+      leads.push(newLead);
+      localStorage.setItem('bh_quiz_leads', JSON.stringify(leads));
+    } catch (err) {
+      console.error('Failed to save lead info', err);
+    }
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);

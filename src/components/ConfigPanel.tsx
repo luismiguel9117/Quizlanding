@@ -9,7 +9,8 @@ import {
   Save, 
   Check, 
   HelpCircle,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights, getLevelThresholds, saveLevelThresholds, LevelThresholds, DEFAULT_QUESTIONS } from '../data/questions';
 import { Question } from '../types';
@@ -86,6 +87,51 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     };
     setLevelThresholds(updated);
     setHasChanges(true);
+  };
+
+  // Leads list state & actions
+  const [leadsList, setLeadsList] = useState<any[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const stored = localStorage.getItem('bh_quiz_leads');
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [isLeadsCardOpen, setIsLeadsCardOpen] = useState(false);
+
+  const downloadLeadsCSV = () => {
+    if (leadsList.length === 0) {
+      alert('No hay leads registrados aún.');
+      return;
+    }
+    let csvContent = '\uFEFF'; // UTF-8 BOM
+    csvContent += 'Nombre Completo,Correo Electrónico,Celular,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
+    leadsList.forEach((lead: any) => {
+      const row = [
+        `"${lead.fullName.replace(/"/g, '""')}"`,
+        `"${lead.email.replace(/"/g, '""')}"`,
+        `"${lead.phone.replace(/"/g, '""')}"`,
+        `"${lead.preferredContact}"`,
+        `"${lead.estimatedLevel}"`,
+        `"${lead.recommendedProgram.replace(/"/g, '""')}"`,
+        `"${new Date(lead.submittedAt).toLocaleString()}"`
+      ];
+      csvContent += row.join(',') + '\n';
+    });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `leads_test_ingles_${new Date().toISOString().slice(0,10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleClearLeads = () => {
+    if (window.confirm('¿Está seguro de que desea eliminar todo el registro de leads? Esta acción no se puede deshacer.')) {
+      localStorage.removeItem('bh_quiz_leads');
+      setLeadsList([]);
+    }
   };
 
   // Filtered list calculation
@@ -536,6 +582,99 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* Collapsible Leads Info */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+          <button 
+            onClick={() => setIsLeadsCardOpen(!isLeadsCardOpen)}
+            className="w-full flex items-center justify-between px-6 py-4 font-bold text-sm tracking-wider uppercase border-b border-white/5 bg-white/[0.02] cursor-pointer"
+          >
+            <span>Registro de Leads (Contactos)</span>
+            <div className="flex items-center gap-3">
+              <span className="bg-[#00B5F7]/20 text-[#00B5F7] px-2.5 py-0.5 rounded-full text-xs font-mono font-bold">
+                {leadsList.length}
+              </span>
+              <span className="text-xs">{isLeadsCardOpen ? '▲ Ocultar' : '▼ Mostrar'}</span>
+            </div>
+          </button>
+
+          {isLeadsCardOpen && (
+            <div className="p-6 space-y-4 text-left">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <p className="text-xs text-white/70">
+                  Lista de personas que han enviado el formulario de contacto al finalizar el examen. Puedes descargarla en formato CSV compatible con Microsoft Excel.
+                </p>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <button
+                    onClick={downloadLeadsCSV}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Descargar Excel (CSV)</span>
+                  </button>
+                  <button
+                    onClick={handleClearLeads}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border border-red-500/20"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Limpiar Historial</span>
+                  </button>
+                </div>
+              </div>
+
+              {leadsList.length === 0 ? (
+                <div className="text-center py-8 text-white/40 text-xs border border-dashed border-white/10 rounded-xl bg-black/10">
+                  No hay contactos registrados todavía en este dispositivo.
+                </div>
+              ) : (
+                <div className="overflow-x-auto border border-white/10 rounded-xl bg-black/10">
+                  <table className="w-full text-left border-collapse text-[10px] sm:text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-white/50 uppercase font-black tracking-wider bg-white/[0.02]">
+                        <th className="py-2.5 px-4">Nombre</th>
+                        <th className="py-2.5 px-4">Contacto</th>
+                        <th className="py-2.5 px-4 text-center">Nivel</th>
+                        <th className="py-2.5 px-4">Programa Recomendado</th>
+                        <th className="py-2.5 px-4 text-right">Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {leadsList.map((lead: any, idx: number) => (
+                        <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3 px-4 font-bold text-white">{lead.fullName}</td>
+                          <td className="py-3 px-4 text-white/80 space-y-0.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-white/40">Cel:</span>
+                              <span className="font-mono">{lead.phone}</span>
+                              <span className="text-[9px] bg-white/10 px-1.5 py-0.2 rounded font-sans text-white/60 lowercase">
+                                ({lead.preferredContact})
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-white/50 text-[10px]">
+                              <span>Email:</span>
+                              <span>{lead.email}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            <span className="bg-[#00B5F7]/10 text-[#00B5F7] px-2 py-0.5 rounded font-mono font-bold">
+                              {lead.estimatedLevel}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-white/70 max-w-[200px] truncate" title={lead.recommendedProgram}>
+                            {lead.recommendedProgram}
+                          </td>
+                          <td className="py-3 px-4 text-right text-white/40 font-mono text-[10px]">
+                            {new Date(lead.submittedAt).toLocaleDateString()} {new Date(lead.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
         </div>
