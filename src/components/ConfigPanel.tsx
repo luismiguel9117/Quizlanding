@@ -89,7 +89,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
 
   // Total statistics per level
   const statsByLevel = useMemo(() => {
-    const counts: Record<string, number> = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+    const counts: Record<string, number> = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0 };
     questionsList.forEach(q => {
       if (counts[q.level] !== undefined) counts[q.level]++;
     });
@@ -121,15 +121,13 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     const T = scoringSummary.totalPoints;
     
     // Lower bounds in points (rounded)
-    const ptC2 = Math.round((levelThresholds.C2 / 100) * T);
     const ptC1 = Math.round((levelThresholds.C1 / 100) * T);
     const ptB2 = Math.round((levelThresholds.B2 / 100) * T);
     const ptB1 = Math.round((levelThresholds.B1 / 100) * T);
     const ptA2 = Math.round((levelThresholds.A2 / 100) * T);
     
     return [
-      { level: 'C2', minPct: levelThresholds.C2, maxPct: 100, minPt: ptC2, maxPt: T },
-      { level: 'C1', minPct: levelThresholds.C1, maxPct: levelThresholds.C2 - 1, minPt: ptC1, maxPt: Math.max(0, ptC2 - 1) },
+      { level: 'C1', minPct: levelThresholds.C1, maxPct: 100, minPt: ptC1, maxPt: T },
       { level: 'B2', minPct: levelThresholds.B2, maxPct: levelThresholds.C1 - 1, minPt: ptB2, maxPt: Math.max(0, ptC1 - 1) },
       { level: 'B1', minPct: levelThresholds.B1, maxPct: levelThresholds.B2 - 1, minPt: ptB1, maxPt: Math.max(0, ptB2 - 1) },
       { level: 'A2', minPct: levelThresholds.A2, maxPct: levelThresholds.B1 - 1, minPt: ptA2, maxPt: Math.max(0, ptB1 - 1) },
@@ -293,11 +291,11 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
 
   // Reset to default list
   const handleReset = () => {
-    if (window.confirm('¿Desea restaurar las 20 preguntas originales? Se perderán todos los cambios personalizados.')) {
+    if (window.confirm('¿Desea restaurar las 27 preguntas originales? Se perderán todos los cambios personalizados.')) {
       resetQuestions();
       setQuestionsList([...QUESTIONS]);
-      setLevelWeights({ A1: 1, A2: 2, B1: 3, B2: 4, C1: 5, C2: 6 });
-      setLevelThresholds({ A2: 13, B1: 27, B2: 47, C1: 70, C2: 87 });
+      setLevelWeights({ A1: 1, A2: 2, B1: 3, B2: 4, C1: 5 });
+      setLevelThresholds({ A2: 38, B1: 54, B2: 60, C1: 86 });
     }
   };
 
@@ -478,7 +476,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                           )}
                         </td>
                         <td className="py-3 text-center text-white/80">
-                          {row.level === 'C2' ? (
+                          {row.level === 'C1' ? (
                             <span>&ge; {row.minPct}%</span>
                           ) : row.level === 'A1' ? (
                             <span>&lt; {row.maxPct + 1}%</span>
@@ -487,7 +485,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                           )}
                         </td>
                         <td className="py-3 text-right font-black text-white/90">
-                          {row.level === 'C2' ? (
+                          {row.level === 'C1' ? (
                             <span>&ge; {row.minPt} pts</span>
                           ) : row.level === 'A1' ? (
                             <span>0 a {row.maxPt} pts</span>
@@ -522,7 +520,6 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                 <option value="B1" className="bg-slate-900">B1</option>
                 <option value="B2" className="bg-slate-900">B2</option>
                 <option value="C1" className="bg-slate-900">C1</option>
-                <option value="C2" className="bg-slate-900">C2</option>
               </select>
             </div>
 
@@ -660,7 +657,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                     onChange={(e) => setFormLevel(e.target.value as Question['level'])}
                     className="w-full bg-black/30 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#00B5F7] cursor-pointer"
                   >
-                    {['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map(lvl => (
+                    {['A1', 'A2', 'B1', 'B2', 'C1'].map(lvl => (
                       <option key={lvl} value={lvl} className="bg-slate-900">{lvl}</option>
                     ))}
                   </select>

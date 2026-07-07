@@ -59,8 +59,7 @@ export default function ReportResult({
     const percentage = totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
     const thresholds = getLevelThresholds();
     let levelKey: EnglishLevelKey = 'B1'; // Default / base
-    if (percentage >= thresholds.C2) levelKey = 'C2';
-    else if (percentage >= thresholds.C1) levelKey = 'C1';
+    if (percentage >= thresholds.C1) levelKey = 'C1';
     else if (percentage >= thresholds.B2) levelKey = 'B2';
     else if (percentage >= thresholds.B1) levelKey = 'B1';
     else if (percentage >= thresholds.A2) levelKey = 'A2';
@@ -86,7 +85,6 @@ export default function ReportResult({
     { key: 'B1', label: 'Intermedio' },
     { key: 'B2', label: 'Intermedio Alto' },
     { key: 'C1', label: 'Avanzado' },
-    { key: 'C2', label: 'Dominio' },
   ];
 
   const getShieldSubtitle = (level: string) => {
@@ -96,7 +94,6 @@ export default function ReportResult({
       case 'B1': return 'INTERMEDIO';
       case 'B2': return 'INT. ALTO';
       case 'C1': return 'AVANZADO';
-      case 'C2': return 'DOMINIO';
       default: return 'INTERMEDIO';
     }
   };
@@ -251,9 +248,9 @@ export default function ReportResult({
                 </div>
               </div>
 
-              {/* Level Scale Timeline (A1 -> C2) */}
+              {/* Level Scale Timeline (A1 -> C1) */}
               <div className="w-full space-y-3 pt-4">
-                <div className="grid grid-cols-6 gap-1 relative text-center">
+                <div className="grid grid-cols-5 gap-1 relative text-center">
                   {cefrLevels.map((lvl) => {
                     const isCurrent = lvl.key === scoreStats.levelKey;
                     return (

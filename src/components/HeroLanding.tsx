@@ -94,7 +94,7 @@ export default function HeroLanding({
                 <div className="w-8 h-8 rounded-lg bg-[#FF1A3B]/10 flex items-center justify-center text-[#FF1A3B] shrink-0">
                   <Globe2 className="w-4.5 h-4.5" />
                 </div>
-                <span>Estándar oficial MCER (A1 - C2)</span>
+                <span>Estándar oficial MCER (A1 - C1)</span>
               </div>
 
               {/* Card 3 */}

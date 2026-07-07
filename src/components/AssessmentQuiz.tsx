@@ -221,7 +221,7 @@ export default function AssessmentQuiz({
   if (isFinishing) {
     const steps = [
       'Analizando patrones de respuestas seleccionadas...',
-      'Mapeando puntajes según el Marco Común Europeo (A1-C2)...',
+      'Mapeando puntajes según el Marco Común Europeo (A1-C1)...',
       'Evaluando competencia gramatical y léxica acumulada...',
       'Compilando sugerencias y programas curriculares...',
       'Preparando reporte de admisión oficial para British House...'

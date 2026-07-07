@@ -6,14 +6,14 @@
 export interface Question {
   id: number;
   category: 'Grammar' | 'Vocabulary' | 'Comprehension';
-  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+  level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
   text: string;
   options: string[];
   correctAnswer: number; // Index inside the options array
   explanation: string;
 }
 
-export type EnglishLevelKey = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+export type EnglishLevelKey = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 
 export interface LevelDetails {
   key: EnglishLevelKey;
