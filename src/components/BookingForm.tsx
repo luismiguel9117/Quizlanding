@@ -91,6 +91,16 @@ export default function BookingForm({
       };
       leads.push(newLead);
       localStorage.setItem('bh_quiz_leads', JSON.stringify(leads));
+
+      // Push data to Google Tag Manager dataLayer
+      const dl = (window as any).dataLayer || [];
+      dl.push({
+        event: 'lead_form_submitted',
+        estimatedLevel: estimatedLevel,
+        recommendedProgram: recommendedProgram,
+        preferredContact: formData.preferredContact
+      });
+      (window as any).dataLayer = dl;
     } catch (err) {
       console.error('Failed to save lead info', err);
     }
