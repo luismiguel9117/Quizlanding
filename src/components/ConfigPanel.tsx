@@ -11,7 +11,7 @@ import {
   HelpCircle,
   AlertCircle
 } from 'lucide-react';
-import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights, getLevelThresholds, saveLevelThresholds, LevelThresholds } from '../data/questions';
+import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights, getLevelThresholds, saveLevelThresholds, LevelThresholds, DEFAULT_QUESTIONS } from '../data/questions';
 import { Question } from '../types';
 
 interface ConfigPanelProps {
@@ -46,6 +46,19 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   // Scoring card states
   const [isScoringCardOpen, setIsScoringCardOpen] = useState(false);
 
+  // Unsaved changes tracking
+  const [hasChanges, setHasChanges] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+
+  const handleSaveChanges = () => {
+    saveQuestions(questionsList);
+    saveLevelWeights(levelWeights as any);
+    saveLevelThresholds(levelThresholds);
+    setHasChanges(false);
+    setShowSaveSuccess(true);
+    setTimeout(() => setShowSaveSuccess(false), 3000);
+  };
+
   // Level weights state
   const [levelWeights, setLevelWeights] = useState<Record<string, number>>(() => getLevelWeights());
 
@@ -57,7 +70,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       [lvl]: val
     };
     setLevelWeights(updatedWeights);
-    saveLevelWeights(updatedWeights as any);
+    setHasChanges(true);
   };
 
   // Level thresholds state
@@ -72,7 +85,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       [lvl]: val
     };
     setLevelThresholds(updated);
-    saveLevelThresholds(updated);
+    setHasChanges(true);
   };
 
   // Filtered list calculation
@@ -275,8 +288,8 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       updatedList = [...questionsList, newQuestion];
     }
 
-    saveQuestions(updatedList);
     setQuestionsList(updatedList);
+    setHasChanges(true);
     setIsModalOpen(false);
   };
 
@@ -284,32 +297,47 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const handleDelete = (id: number) => {
     if (window.confirm('¿Está seguro de que desea eliminar esta pregunta?')) {
       const updatedList = questionsList.filter(q => q.id !== id);
-      saveQuestions(updatedList);
       setQuestionsList(updatedList);
+      setHasChanges(true);
     }
   };
 
   // Reset to default list
   const handleReset = () => {
     if (window.confirm('¿Desea restaurar las 27 preguntas originales? Se perderán todos los cambios personalizados.')) {
-      resetQuestions();
-      setQuestionsList([...QUESTIONS]);
+      setQuestionsList([...DEFAULT_QUESTIONS]);
       setLevelWeights({ A1: 1, A2: 2, B1: 3, B2: 4, C1: 5 });
       setLevelThresholds({ A2: 38, B1: 54, B2: 60, C1: 86 });
+      setHasChanges(true);
     }
   };
-
-
+  const handleBack = () => {
+    if (hasChanges) {
+      if (window.confirm('Tiene cambios sin guardar. ¿Está seguro de que desea salir? Se perderán las modificaciones.')) {
+        onBack();
+      }
+    } else {
+      onBack();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gaming-dark text-white py-8 px-4 md:px-8 font-sans">
       <div className="w-full max-w-7xl mx-auto space-y-6">
         
+        {/* Save Success Alert */}
+        {showSaveSuccess && (
+          <div className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-2 text-xs font-bold uppercase tracking-wider animate-bounce">
+            <Check className="w-4.5 h-4.5" />
+            <span>¡Cambios guardados con éxito en la base de datos!</span>
+          </div>
+        )}
+        
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
           <div className="flex items-center gap-3">
             <button 
-              onClick={onBack}
+              onClick={handleBack}
               className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-white cursor-pointer"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -324,7 +352,17 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
             </div>
           </div>
           
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+            {hasChanges && (
+              <button
+                onClick={handleSaveChanges}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-[#00B5F7] hover:bg-[#0092c7] text-white px-5 py-3 rounded-full text-xs font-black tracking-wider uppercase transition-all shadow-[0_4px_15px_rgba(0,181,247,0.4)] cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                <span>Guardar Cambios</span>
+              </button>
+            )}
+
             <button
               onClick={handleOpenAdd}
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-[#FF1A3B] hover:bg-[#E00F2E] text-white px-5 py-3 rounded-full text-xs font-black tracking-wider uppercase transition-all shadow-[0_4px_15px_rgba(255,26,59,0.3)] cursor-pointer"

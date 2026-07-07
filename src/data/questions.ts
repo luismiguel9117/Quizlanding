@@ -5,7 +5,7 @@
 
 import { Question, LevelDetails, EnglishLevelKey } from '../types';
 
-const DEFAULT_QUESTIONS: Question[] = [
+export const DEFAULT_QUESTIONS: Question[] = [
   // --- A1 LEVEL (Questions 1 - 13) ---
   {
     id: 1,
