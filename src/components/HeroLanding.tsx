@@ -43,7 +43,7 @@ export default function HeroLanding({
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-100px)] flex items-center justify-center py-10 px-4 md:px-8 overflow-x-hidden bg-union-jack-grid">
+    <div className="relative min-h-[calc(100vh-100px)] flex items-center justify-center py-10 px-4 md:px-8 overflow-hidden bg-union-jack-grid">
       
       {/* Immersive background light leaks and glows */}
       <div className="absolute top-[10%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-[#1736D1]/20 blur-[130px] pointer-events-none -z-10 animate-pulse-glow" />

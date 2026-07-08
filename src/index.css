@@ -40,10 +40,8 @@ html {
 }
 
 html {
-  height: auto !important;
-  min-height: 100% !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  height: 100% !important;
+  overflow: hidden !important;
 }
 
 body {
@@ -51,9 +49,15 @@ body {
   background: radial-gradient(circle, #00B5F7 0%, #004BDC 100%) no-repeat center center fixed;
   background-size: cover;
   margin: 0;
-  height: auto !important;
-  min-height: 100% !important;
-  overflow: visible !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 body::before {

@@ -103,15 +103,15 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       return;
     }
     let csvContent = '\uFEFF'; // UTF-8 BOM
-    csvContent += 'Nombre Completo,Correo Electrónico,Celular,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
+    csvContent += 'Distrito,Correo Electrónico,Celular,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
     leadsList.forEach((lead: any) => {
       const row = [
-        `"${lead.fullName.replace(/"/g, '""')}"`,
-        `"${lead.email.replace(/"/g, '""')}"`,
-        `"${lead.phone.replace(/"/g, '""')}"`,
+        `"${(lead.district || lead.fullName || '').replace(/"/g, '""')}"`,
+        `"${(lead.email || '').replace(/"/g, '""')}"`,
+        `"${(lead.phone || '').replace(/"/g, '""')}"`,
         `"${lead.preferredContact}"`,
         `"${lead.estimatedLevel}"`,
-        `"${lead.recommendedProgram.replace(/"/g, '""')}"`,
+        `"${(lead.recommendedProgram || '').replace(/"/g, '""')}"`,
         `"${new Date(lead.submittedAt).toLocaleString()}"`
       ];
       csvContent += row.join(',') + '\n';
@@ -634,7 +634,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                   <table className="w-full text-left border-collapse text-[10px] sm:text-xs">
                     <thead>
                       <tr className="border-b border-white/10 text-white/50 uppercase font-black tracking-wider bg-white/[0.02]">
-                        <th className="py-2.5 px-4">Nombre</th>
+                        <th className="py-2.5 px-4">Distrito</th>
                         <th className="py-2.5 px-4">Contacto</th>
                         <th className="py-2.5 px-4 text-center">Nivel</th>
                         <th className="py-2.5 px-4">Programa Recomendado</th>
@@ -644,7 +644,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                     <tbody className="divide-y divide-white/5">
                       {leadsList.map((lead: any, idx: number) => (
                         <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 px-4 font-bold text-white">{lead.fullName}</td>
+                          <td className="py-3 px-4 font-bold text-white">{lead.district || lead.fullName || 'No especificado'}</td>
                           <td className="py-3 px-4 text-white/80 space-y-0.5">
                             <div className="flex items-center gap-1.5">
                               <span className="text-white/40">Cel:</span>

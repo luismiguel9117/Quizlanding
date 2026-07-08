@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, User, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
 import { ConsultationForm } from '../types';
 
 interface BookingFormProps {
@@ -15,7 +15,7 @@ interface BookingFormProps {
   estimatedLevel?: string;
   recommendedProgram?: string;
   isPreQuiz?: boolean;
-  onSubmitSuccess?: (data: { fullName: string; email: string; phone: string }) => void;
+  onSubmitSuccess?: (data: { email: string; phone: string; district: string }) => void;
 }
 
 export default function BookingForm({
@@ -28,9 +28,9 @@ export default function BookingForm({
   onSubmitSuccess,
 }: BookingFormProps) {
   const [formData, setFormData] = useState<ConsultationForm>({
-    fullName: '',
     email: '',
     phone: '',
+    district: '',
     preferredContact: 'whatsapp',
     termsAccepted: true,
   });
@@ -47,12 +47,7 @@ export default function BookingForm({
 
   const validate = () => {
     const newErrors: Partial<ConsultationForm> = {};
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Por favor, ingresa tu nombre completo.';
-    } else if (formData.fullName.trim().length < 3) {
-      newErrors.fullName = 'El nombre debe tener al menos 3 caracteres.';
-    }
-
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
       newErrors.email = 'Por favor, ingresa tu correo electrónico.';
@@ -65,6 +60,12 @@ export default function BookingForm({
       newErrors.phone = 'Por favor, ingresa tu celular.';
     } else if (phoneDigits.length < 9) {
       newErrors.phone = 'El celular debe tener al menos 9 dígitos.';
+    }
+
+    if (!formData.district.trim()) {
+      newErrors.district = 'Por favor, ingresa tu distrito.';
+    } else if (formData.district.trim().length < 3) {
+      newErrors.district = 'El distrito debe tener al menos 3 caracteres.';
     }
 
     if (!formData.termsAccepted) {
@@ -85,9 +86,9 @@ export default function BookingForm({
       const stored = localStorage.getItem('bh_quiz_leads');
       const leads = stored ? JSON.parse(stored) : [];
       const newLead = {
-        fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
+        district: formData.district,
         preferredContact: 'whatsapp',
         estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
         recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
@@ -114,9 +115,9 @@ export default function BookingForm({
       if (isPreQuiz) {
         if (onSubmitSuccess) {
           onSubmitSuccess({
-            fullName: formData.fullName,
             email: formData.email,
-            phone: formData.phone
+            phone: formData.phone,
+            district: formData.district
           });
         }
       } else {
@@ -203,7 +204,7 @@ export default function BookingForm({
                       ¡Registro Exitoso!
                     </h3>
                     <p className="text-xs font-sans text-slate-650 max-w-sm mb-5 leading-relaxed font-medium">
-                      Muchas gracias, <span className="font-extrabold text-[#0A2E9E]">{formData.fullName}</span>. 
+                      Muchas gracias por registrarte.
                       Tu nivel estimado es <span className="font-bold text-[#0A2E9E] bg-slate-50 border border-slate-100 px-2 py-0.5 rounded ml-1">{estimatedLevel}</span>. 
                       Un asesor educativo calificado se comunicará contigo en los próximos minutos para brindarte asesoría gratuita de admisión.
                     </p>
@@ -249,81 +250,80 @@ export default function BookingForm({
                       </div>
                     )}
 
-                    {/* Name */}
+                    {/* Correo Electrónico */}
                     <div>
                       <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
-                        Nombres y Apellidos
+                        Correo Electrónico
                       </label>
                       <div className="relative">
-                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
                         <input
-                          type="text"
-                          value={formData.fullName}
+                          type="email"
+                          value={formData.email}
                           onChange={(e) => {
-                            setFormData({ ...formData, fullName: e.target.value });
-                            if (errors.fullName) setErrors({ ...errors, fullName: '' });
+                            setFormData({ ...formData, email: e.target.value });
+                            if (errors.email) setErrors({ ...errors, email: '' });
                           }}
-                          placeholder="Ej. Juan Pérez"
+                          placeholder="Ej. juan.perez@gmail.com"
                           className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
-                            errors.fullName ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                            errors.email ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
                           } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
                         />
                       </div>
-                      {errors.fullName && (
-                        <p className="text-red-505 text-xs mt-1 font-bold">{errors.fullName}</p>
+                      {errors.email && (
+                        <p className="text-red-505 text-xs mt-1 font-bold">{errors.email}</p>
                       )}
                     </div>
 
-                    {/* Contact details */}
-                    <div className="grid grid-cols-1 gap-4">
-                      <div>
-                        <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
-                          Correo Electrónico
-                        </label>
-                        <div className="relative">
-                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
-                          <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => {
-                              setFormData({ ...formData, email: e.target.value });
-                              if (errors.email) setErrors({ ...errors, email: '' });
-                            }}
-                            placeholder="Ej. juan.perez@gmail.com"
-                            className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
-                              errors.email ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
-                            } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
-                          />
-                        </div>
-                        {errors.email && (
-                          <p className="text-red-505 text-xs mt-1 font-bold">{errors.email}</p>
-                        )}
+                    {/* Celular */}
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
+                        Celular (WhatsApp)
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => {
+                            setFormData({ ...formData, phone: e.target.value });
+                            if (errors.phone) setErrors({ ...errors, phone: '' });
+                          }}
+                          placeholder="Ej. 987654321"
+                          maxLength={15}
+                          className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
+                            errors.phone ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                          } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
+                        />
                       </div>
+                      {errors.phone && (
+                        <p className="text-red-505 text-xs mt-1 font-bold">{errors.phone}</p>
+                      )}
+                    </div>
 
-                      <div>
-                        <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
-                          Celular (WhatsApp)
-                        </label>
-                        <div className="relative">
-                          <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
-                          <input
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => {
-                              setFormData({ ...formData, phone: e.target.value });
-                              if (errors.phone) setErrors({ ...errors, phone: '' });
-                            }}
-                            placeholder="Ej. 987654321"
-                            maxLength={15}
-                            className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
-                              errors.phone ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
-                            } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
-                          />
-                        </div>
-                        {errors.phone && (
-                          <p className="text-red-505 text-xs mt-1 font-bold">{errors.phone}</p>
-                        )}
+                    {/* Distrito */}
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
+                        Distrito
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+                        <input
+                          type="text"
+                          value={formData.district}
+                          onChange={(e) => {
+                            setFormData({ ...formData, district: e.target.value });
+                            if (errors.district) setErrors({ ...errors, district: '' });
+                          }}
+                          placeholder="Ej. Miraflores"
+                          className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
+                            errors.district ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                          } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
+                        />
                       </div>
+                      {errors.district && (
+                        <p className="text-red-505 text-xs mt-1 font-bold">{errors.district}</p>
+                      )}
                     </div>
 
                     {/* Terms & Conditions Box */}

@@ -30,9 +30,9 @@ export interface LevelDetails {
 }
 
 export interface ConsultationForm {
-  fullName: string;
   email: string;
   phone: string;
+  district: string;
   preferredContact: 'whatsapp' | 'email' | 'phone';
   termsAccepted: boolean;
 }
