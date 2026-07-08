@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, User, Send, CheckCircle2, X, MessageSquare, Calendar, ShieldCheck, Star } from 'lucide-react';
+import { Mail, Phone, User, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
 import { ConsultationForm } from '../types';
 
 interface BookingFormProps {
@@ -14,6 +14,8 @@ interface BookingFormProps {
   initialType?: 'info' | 'consultation';
   estimatedLevel?: string;
   recommendedProgram?: string;
+  isPreQuiz?: boolean;
+  onSubmitSuccess?: (data: { fullName: string; email: string; phone: string }) => void;
 }
 
 export default function BookingForm({
@@ -22,8 +24,9 @@ export default function BookingForm({
   initialType = 'info',
   estimatedLevel = 'B1',
   recommendedProgram = 'Regular English Program',
+  isPreQuiz = false,
+  onSubmitSuccess,
 }: BookingFormProps) {
-  const [formType, setFormType] = useState<'info' | 'consultation'>(initialType);
   const [formData, setFormData] = useState<ConsultationForm>({
     fullName: '',
     email: '',
@@ -36,12 +39,11 @@ export default function BookingForm({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   React.useEffect(() => {
-    setFormType(initialType);
     if (isOpen) {
       setIsSubmitted(false);
       setIsSubmitting(false);
     }
-  }, [isOpen, initialType]);
+  }, [isOpen]);
 
   const validate = () => {
     const newErrors: Partial<ConsultationForm> = {};
@@ -51,16 +53,18 @@ export default function BookingForm({
       newErrors.fullName = 'El nombre debe tener al menos 3 caracteres.';
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
       newErrors.email = 'Por favor, ingresa tu correo electrónico.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Por favor, ingresa un correo electrónico válido.';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Ingresa un correo electrónico válido.';
     }
 
+    const phoneDigits = formData.phone.replace(/\D/g, '');
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Por favor, ingresa tu número de celular.';
-    } else if (!/^[0-9\s\-+]{9,15}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Por favor, ingresa un número de celular válido para Perú (9 dígitos).';
+      newErrors.phone = 'Por favor, ingresa tu celular.';
+    } else if (phoneDigits.length < 9) {
+      newErrors.phone = 'El celular debe tener al menos 9 dígitos.';
     }
 
     if (!formData.termsAccepted) {
@@ -84,9 +88,9 @@ export default function BookingForm({
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        preferredContact: formData.preferredContact,
-        estimatedLevel,
-        recommendedProgram,
+        preferredContact: 'whatsapp',
+        estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
+        recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
         submittedAt: new Date().toISOString()
       };
       leads.push(newLead);
@@ -96,9 +100,9 @@ export default function BookingForm({
       const dl = (window as any).dataLayer || [];
       dl.push({
         event: 'lead_form_submitted',
-        estimatedLevel: estimatedLevel,
-        recommendedProgram: recommendedProgram,
-        preferredContact: formData.preferredContact
+        estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
+        recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
+        preferredContact: 'whatsapp'
       });
       (window as any).dataLayer = dl;
     } catch (err) {
@@ -107,7 +111,17 @@ export default function BookingForm({
 
     setTimeout(() => {
       setIsSubmitting(false);
-      setIsSubmitted(true);
+      if (isPreQuiz) {
+        if (onSubmitSuccess) {
+          onSubmitSuccess({
+            fullName: formData.fullName,
+            email: formData.email,
+            phone: formData.phone
+          });
+        }
+      } else {
+        setIsSubmitted(true);
+      }
     }, 1100);
   };
 
@@ -121,78 +135,58 @@ export default function BookingForm({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#020925]/90 backdrop-blur-md z-30"
+            className="absolute inset-0 bg-[#020925]/60 backdrop-blur-sm z-30"
           />
 
-          {/* Modal Card container */}
+          {/* Modal Card container (White & Minimalist) */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-            transition={{ type: 'spring', duration: 0.5 }}
-            className="relative w-full max-w-lg bg-[#120b36] rounded-[32px] shadow-[0_25px_60px_rgba(0,0,0,0.5)] overflow-hidden border border-white/10 z-40 text-white"
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100 z-40 text-slate-800"
           >
-            {/* Header backdrop gradient */}
-            <div className="bg-gradient-to-br from-[#0A2E9E] via-[#1736D1] to-[#4A2DCC] px-6 py-6 text-white relative">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-100 px-6 pt-7 pb-4 text-slate-800 relative">
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-1.5 transition-all cursor-pointer"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition-all cursor-pointer"
                 aria-label="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
               
               <div className="flex gap-2 mb-2">
-                <span className="text-[9px] bg-[#FFC83D] text-[#020925] font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-[0_4px_10px_rgba(255,200,61,0.3)]">
-                  Nivel {estimatedLevel} Estimado
-                </span>
-                <span className="text-[9px] bg-white/20 font-sans font-bold text-white uppercase tracking-wider px-3 py-1 rounded-full">
-                  Admisiones British House
-                </span>
+                {!isPreQuiz ? (
+                  <>
+                    <span className="text-[9px] bg-[#0A2E9E] text-white font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full">
+                      Nivel {estimatedLevel} Estimado
+                    </span>
+                    <span className="text-[9px] bg-slate-100 font-sans font-bold text-slate-600 uppercase tracking-wider px-3 py-1 rounded-full">
+                      Admisiones British House
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-[9px] bg-[#0A2E9E] text-white font-sans font-black uppercase tracking-wider px-3 py-1 rounded-full">
+                    Registro de Nivelación
+                  </span>
+                )}
               </div>
 
-              <h2 className="text-xl md:text-2xl font-display font-black uppercase tracking-wide">
-                {formType === 'info' ? 'Solicitar Malla Curricular' : 'Reservar Asesoría Gratuita'}
+              <h2 className="text-lg font-sans font-black uppercase tracking-wide text-slate-900 mt-1">
+                {isPreQuiz ? 'Ingresa tus datos para empezar' : (initialType === 'info' ? 'Solicitar Malla Curricular' : 'Reservar Asesoría Gratuita')}
               </h2>
-              <p className="text-slate-200 text-xs mt-1.5 font-medium leading-relaxed">
-                {formType === 'info'
-                  ? `Descubre la duración, precios y beneficios de estudiar el programa: ${recommendedProgram}.`
-                  : 'Agenda una llamada corta de 5 minutos con un especialista para trazar tu ruta académica.'}
+              <p className="text-slate-500 text-xs mt-1 font-medium leading-relaxed">
+                {isPreQuiz
+                  ? 'Por favor, completa esta información rápida para poder habilitar tu test de 10 preguntas.'
+                  : (initialType === 'info'
+                      ? `Descubre la duración, precios y beneficios de estudiar el programa: ${recommendedProgram}.`
+                      : 'Agenda una llamada corta de 5 minutos con un especialista para trazar tu ruta académica.')}
               </p>
-
-              {/* Toggle tabs (glass design) */}
-              <div className="flex bg-[#020925]/45 p-1 rounded-xl mt-4 gap-1 border border-white/10">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormType('info');
-                    setIsSubmitted(false);
-                  }}
-                  className={`flex-1 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer text-center flex items-center justify-center gap-1.5 ${
-                    formType === 'info' ? 'bg-[#FFC83D] text-[#020925]' : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  Malla y Precios
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormType('consultation');
-                    setIsSubmitted(false);
-                  }}
-                  className={`flex-1 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer text-center flex items-center justify-center gap-1.5 ${
-                    formType === 'consultation' ? 'bg-[#FFC83D] text-[#020925]' : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  <Calendar className="w-3.5 h-3.5" />
-                  Llamar a un Asesor
-                </button>
-              </div>
             </div>
 
             {/* Modal Form body */}
-            <div className="p-6 md:p-8 bg-[#120b36]/90 backdrop-blur-xl">
+            <div className="p-6 bg-white">
               <AnimatePresence mode="wait">
                 {isSubmitted ? (
                   <motion.div
@@ -200,38 +194,38 @@ export default function BookingForm({
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center py-6 text-center"
+                    className="flex flex-col items-center justify-center py-6 text-center text-slate-850"
                   >
-                    <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20 text-emerald-400 mb-4 shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse">
-                      <CheckCircle2 className="w-10 h-10" />
+                    <div className="w-14 h-14 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20 text-emerald-600 mb-4 shadow-sm">
+                      <CheckCircle2 className="w-9 h-9" />
                     </div>
-                    <h3 className="text-xl font-display font-black text-white uppercase tracking-wide mb-2">
+                    <h3 className="text-lg font-sans font-black text-slate-900 uppercase tracking-wide mb-1.5">
                       ¡Registro Exitoso!
                     </h3>
-                    <p className="text-xs md:text-sm font-sans text-slate-300 max-w-sm mb-6 leading-relaxed">
-                      Muchas gracias, <span className="font-extrabold text-[#FFC83D]">{formData.fullName}</span>. 
-                      Tu nivel estimado es <span className="font-bold text-[#FFC83D] bg-white/5 border border-white/10 px-2 py-0.5 rounded ml-1">{estimatedLevel}</span>. 
-                      Un asesor educativo calificado se comunicará contigo mediante <span className="font-bold text-white capitalize">{formData.preferredContact === 'phone' ? 'Llamada' : formData.preferredContact === 'email' ? 'Correo Electrónico' : 'WhatsApp'}</span> en los próximos minutos para brindarte asesoría gratuita de admisión.
+                    <p className="text-xs font-sans text-slate-650 max-w-sm mb-5 leading-relaxed font-medium">
+                      Muchas gracias, <span className="font-extrabold text-[#0A2E9E]">{formData.fullName}</span>. 
+                      Tu nivel estimado es <span className="font-bold text-[#0A2E9E] bg-slate-50 border border-slate-100 px-2 py-0.5 rounded ml-1">{estimatedLevel}</span>. 
+                      Un asesor educativo calificado se comunicará contigo en los próximos minutos para brindarte asesoría gratuita de admisión.
                     </p>
                     
-                    <div className="w-full bg-[#020925]/60 rounded-2xl p-4.5 border border-white/5 text-left space-y-2 mb-6 text-xs text-slate-300">
+                    <div className="w-full bg-slate-50 rounded-xl p-4 border border-slate-100 text-left space-y-2 mb-5 text-xs text-slate-600">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-slate-400 uppercase text-[9px] tracking-wider">CENTRO DE ADMISIONES:</span>
-                        <span className="font-bold text-white">British House - Perú</span>
+                        <span className="font-bold text-slate-800">British House - Perú</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-slate-400 uppercase text-[9px] tracking-wider">TIEMPO ESTIMADO:</span>
-                        <span className="font-semibold text-[#FFC83D] text-glow-yellow">Menos de 10 minutos</span>
+                        <span className="font-semibold text-emerald-600">Menos de 10 minutos</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-slate-400 uppercase text-[9px] tracking-wider">PROGRAMA RECOMENDADO:</span>
-                        <span className="font-bold text-white">{recommendedProgram}</span>
+                        <span className="font-bold text-slate-800">{recommendedProgram}</span>
                       </div>
                     </div>
 
                     <button
                       onClick={onClose}
-                      className="w-full py-4.5 bg-[#0A2E9E] hover:bg-[#1736D1] text-white font-sans font-black tracking-widest uppercase rounded-xl shadow-lg transition-all duration-205 cursor-pointer"
+                      className="w-full py-3.5 bg-slate-900 hover:bg-slate-855 text-white font-sans font-black tracking-widest uppercase rounded-xl transition-all duration-200 cursor-pointer text-xs"
                     >
                       Cerrar Ventana
                     </button>
@@ -246,16 +240,18 @@ export default function BookingForm({
                     className="space-y-4 font-sans text-left"
                   >
                     {/* Course outline indicator */}
-                    <div className="bg-[#020925]/60 p-3 rounded-xl border border-white/5 flex items-center justify-between text-xs text-slate-300">
-                      <span className="font-bold text-slate-400 uppercase text-[9px] tracking-wider">RECOMENDADO PARA TU NIVEL:</span>
-                      <span className="font-extrabold text-[#FFC83D] text-glow-yellow bg-[#FFC83D]/10 px-2.5 py-0.5 rounded-lg border border-[#FFC83D]/30">
-                        {recommendedProgram}
-                      </span>
-                    </div>
+                    {!isPreQuiz && (
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                        <span className="font-bold text-slate-400 uppercase text-[9px] tracking-wider">RECOMENDADO:</span>
+                        <span className="font-extrabold text-[#0A2E9E] bg-[#0A2E9E]/5 px-2.5 py-0.5 rounded-lg border border-[#0A2E9E]/10">
+                          {recommendedProgram}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Name */}
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-widest">
+                      <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
                         Nombres y Apellidos
                       </label>
                       <div className="relative">
@@ -268,20 +264,20 @@ export default function BookingForm({
                             if (errors.fullName) setErrors({ ...errors, fullName: '' });
                           }}
                           placeholder="Ej. Juan Pérez"
-                          className={`w-full pl-10 pr-4 py-2.5 bg-[#020925]/60 border ${
-                            errors.fullName ? 'border-red-400' : 'border-white/10 focus:border-[#FFC83D]/60'
-                          } text-white placeholder-slate-500 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC83D]/20 transition-all`}
+                          className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
+                            errors.fullName ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                          } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
                         />
                       </div>
                       {errors.fullName && (
-                        <p className="text-red-400 text-xs mt-1 font-bold">{errors.fullName}</p>
+                        <p className="text-red-505 text-xs mt-1 font-bold">{errors.fullName}</p>
                       )}
                     </div>
 
                     {/* Contact details */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label className="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-widest">
+                        <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
                           Correo Electrónico
                         </label>
                         <div className="relative">
@@ -294,18 +290,18 @@ export default function BookingForm({
                               if (errors.email) setErrors({ ...errors, email: '' });
                             }}
                             placeholder="Ej. juan.perez@gmail.com"
-                            className={`w-full pl-10 pr-4 py-2.5 bg-[#020925]/60 border ${
-                              errors.email ? 'border-red-400' : 'border-white/10 focus:border-[#FFC83D]/60'
-                            } text-white placeholder-slate-500 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC83D]/20 transition-all`}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
+                              errors.email ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                            } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
                           />
                         </div>
                         {errors.email && (
-                          <p className="text-red-400 text-xs mt-1 font-bold">{errors.email}</p>
+                          <p className="text-red-505 text-xs mt-1 font-bold">{errors.email}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-widest">
+                        <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
                           Celular (WhatsApp)
                         </label>
                         <div className="relative">
@@ -319,51 +315,19 @@ export default function BookingForm({
                             }}
                             placeholder="Ej. 987654321"
                             maxLength={15}
-                            className={`w-full pl-10 pr-4 py-2.5 bg-[#020925]/60 border ${
-                              errors.phone ? 'border-red-400' : 'border-white/10 focus:border-[#FFC83D]/60'
-                            } text-white placeholder-slate-500 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFC83D]/20 transition-all`}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
+                              errors.phone ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                            } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
                           />
                         </div>
                         {errors.phone && (
-                          <p className="text-red-400 text-xs mt-1 font-bold">{errors.phone}</p>
+                          <p className="text-red-505 text-xs mt-1 font-bold">{errors.phone}</p>
                         )}
                       </div>
                     </div>
 
-                    {/* Preferred Method of Contact */}
-                    <div>
-                      <span className="block text-[10px] font-black text-slate-400 mb-2 uppercase tracking-widest">
-                        ¿Cómo te gustaría ser contactado para recibir tu guía y tarifas?
-                      </span>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { key: 'whatsapp', label: 'WhatsApp' },
-                          { key: 'phone', label: 'Celular' },
-                          { key: 'email', label: 'Correo PDF' },
-                        ].map((method) => (
-                          <label
-                            key={method.key}
-                            className={`flex items-center justify-center p-2.5 rounded-xl border text-xs font-black uppercase tracking-wider cursor-pointer select-none transition-all duration-200 ${
-                              formData.preferredContact === method.key
-                                ? 'bg-[#0A2E9E]/45 border-[#FFC83D] text-white shadow-md'
-                                : 'bg-[#020925]/30 border-white/5 text-slate-450 hover:bg-white/5 hover:text-white'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="preferredContact"
-                              checked={formData.preferredContact === method.key}
-                              onChange={() => setFormData({ ...formData, preferredContact: method.key as any })}
-                              className="sr-only"
-                            />
-                            {method.label}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-
                     {/* Terms & Conditions Box */}
-                    <div className="flex items-start gap-2 pt-2 text-left">
+                    <div className="flex items-start gap-2 pt-1 text-left">
                       <input
                         id="privacy-terms-checkbox"
                         type="checkbox"
@@ -372,39 +336,39 @@ export default function BookingForm({
                           setFormData({ ...formData, termsAccepted: e.target.checked });
                           if (errors.termsAccepted) setErrors({ ...errors, termsAccepted: false as any });
                         }}
-                        className={`w-4 h-4 rounded mt-0.5 text-[#0A2E9E] focus:ring-[#FFC83D]/20 bg-[#020925] cursor-pointer ${
-                          errors.termsAccepted ? 'border-red-400' : 'border-white/15'
+                        className={`w-4 h-4 rounded mt-0.5 text-[#0A2E9E] focus:ring-slate-100 bg-slate-50 cursor-pointer ${
+                          errors.termsAccepted ? 'border-red-400' : 'border-slate-200'
                         }`}
                       />
-                      <label htmlFor="privacy-terms-checkbox" className="text-[10px] leading-relaxed text-slate-400 select-none cursor-pointer">
-                        Acepto recibir la mallas del curso e invitaciones académicas confidenciales de British House Perú en conformidad con la política de seguridad de datos. Conexión encriptada SSL.
+                      <label htmlFor="privacy-terms-checkbox" className="text-[10px] leading-relaxed text-slate-500 select-none cursor-pointer">
+                        Acepto recibir la malla del curso e invitaciones académicas confidenciales de British House Perú en conformidad con la política de seguridad de datos. Conexión encriptada SSL.
                       </label>
                     </div>
 
-                    {/* ACCENT YELLOW SUBMISSION BUTTON */}
+                    {/* ACCENT SUBMISSION BUTTON */}
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-4.5 mt-4 bg-gradient-to-r from-[#FFC83D] via-[#ffe08a] to-[#FFC83D] text-[#020925] font-sans font-black tracking-widest uppercase rounded-xl shadow-[0_0_20px_rgba(255,200,61,0.35)] hover:shadow-[0_0_30px_rgba(255,200,61,0.55)] cursor-pointer transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs animate-shine"
+                      className="w-full py-4 mt-3 bg-slate-900 hover:bg-slate-800 text-white font-sans font-black tracking-widest uppercase rounded-xl transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-xs cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-[#020925]" fill="none" viewBox="0 0 24 24">
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                           </svg>
-                          Procesando Solicitud...
+                          Procesando...
                         </>
                       ) : (
                         <>
-                          <Send className="w-4 h-4" />
-                          {formType === 'info' ? 'Solicitar Malla y Promociones' : 'Reservar Cita Académica'}
+                          <Send className="w-3.5 h-3.5" />
+                          {isPreQuiz ? 'Comenzar Test Ahora' : 'Enviar Información'}
                         </>
                       )}
                     </button>
 
-                    <div className="flex items-center justify-center gap-1 text-[9px] text-[#FFC83D] uppercase tracking-widest mt-2 font-black text-glow-yellow font-mono">
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#FFC83D]" />
+                    <div className="flex items-center justify-center gap-1.5 text-[9px] text-[#0A2E9E] uppercase tracking-widest mt-3.5 font-bold font-mono">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#0A2E9E]" />
                       <span>Preparación Oficial Cambridge • Conexión Segura</span>
                     </div>
                   </motion.form>

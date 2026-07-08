@@ -9,6 +9,7 @@ import HeroLanding from './components/HeroLanding';
 import AssessmentQuiz from './components/AssessmentQuiz';
 import ReportResult from './components/ReportResult';
 import ConfigPanel from './components/ConfigPanel';
+import BookingForm from './components/BookingForm';
 
 type ScreenState = 'landing' | 'quiz' | 'result' | 'config';
 
@@ -27,12 +28,13 @@ export default function App() {
   });
   const [responses, setResponses] = useState<QuizResponse[]>([]);
   const [isExampleReport, setIsExampleReport] = useState(false);
+  const [isPreQuizOpen, setIsPreQuizOpen] = useState(false);
 
   // Action to launch a fresh exam
   const handleStartAssessment = useCallback(() => {
     setResponses([]);
     setIsExampleReport(false);
-    setScreen('quiz');
+    setIsPreQuizOpen(true);
   }, []);
 
   // Action to simulate sample results immediately (demonstrating standard B1 Intermediate score patterns)
@@ -128,7 +130,7 @@ export default function App() {
             <button 
               onClick={() => {
                 if (screen === 'landing') {
-                  setScreen('quiz');
+                  handleStartAssessment();
                 } else {
                   handleRestart();
                 }
@@ -319,6 +321,17 @@ export default function App() {
         </div>
       </footer>
       )}
+
+      {/* Mandatory Pre-Quiz Registration Modal */}
+      <BookingForm
+        isOpen={isPreQuizOpen}
+        onClose={() => setIsPreQuizOpen(false)}
+        isPreQuiz={true}
+        onSubmitSuccess={() => {
+          setIsPreQuizOpen(false);
+          setScreen('quiz');
+        }}
+      />
     </div>
   );
 }
