@@ -78,25 +78,18 @@ export default function ReportResult({
     return LEVEL_DETAILS[scoreStats.levelKey];
   }, [scoreStats.levelKey]);
 
-  // Horizontal CEFR levels
-  const cefrLevels: { key: EnglishLevelKey; label: string }[] = [
-    { key: 'A1', label: 'Principiante' },
-    { key: 'A2', label: 'Elemental' },
-    { key: 'B1', label: 'Intermedio' },
-    { key: 'B2', label: 'Intermedio Alto' },
-    { key: 'C1', label: 'Avanzado' },
-  ];
-
-  const getShieldSubtitle = (level: string) => {
-    switch (level) {
-      case 'A1': return 'PRINCIPIANTE';
-      case 'A2': return 'ELEMENTAL';
-      case 'B1': return 'INTERMEDIO';
-      case 'B2': return 'INT. ALTO';
-      case 'C1': return 'AVANZADO';
-      default: return 'INTERMEDIO';
-    }
+  // Map detailed CEFR levels to broad level groups
+  const getBroadLevelGroup = (level: EnglishLevelKey): 'Básico' | 'Intermedio' | 'Avanzado' => {
+    if (level === 'A1' || level === 'A2') return 'Básico';
+    if (level === 'B1' || level === 'B2') return 'Intermedio';
+    return 'Avanzado';
   };
+
+  const broadLevels = [
+    { key: 'Básico', label: 'Básico' },
+    { key: 'Intermedio', label: 'Intermedio' },
+    { key: 'Avanzado', label: 'Avanzado' },
+  ];
 
   // 2. Confetti Effect
   useEffect(() => {
@@ -238,36 +231,42 @@ export default function ReportResult({
                   <path d="M 50 12 C 84 12, 88 16, 88 50 C 88 80, 71 101, 50 109 C 29 101, 12 80, 12 50 C 12 16, 16 12, 50 12 Z" fill="none" stroke="#FFC83D" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
                 </svg>
                 
-                <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-                  <span className="text-5xl font-sans font-black text-white tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                    {scoreStats.levelKey}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pt-3 px-4">
+                  <span className={`font-sans font-black text-white tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)] uppercase ${
+                    getBroadLevelGroup(scoreStats.levelKey) === 'Intermedio'
+                      ? 'text-lg'
+                      : getBroadLevelGroup(scoreStats.levelKey) === 'Avanzado'
+                      ? 'text-xl'
+                      : 'text-2xl'
+                  }`}>
+                    {getBroadLevelGroup(scoreStats.levelKey)}
                   </span>
-                  <span className="text-[10px] font-mono font-black text-[#FFC83D] uppercase tracking-widest mt-2 px-3 py-1 bg-[#020925]/70 rounded-full border border-[#FFC83D]/25">
-                    {getShieldSubtitle(scoreStats.levelKey)}
+                  <span className="text-[9px] font-mono font-black text-[#FFC83D] uppercase tracking-widest mt-2 px-2.5 py-1 bg-[#020925]/75 rounded-full border border-[#FFC83D]/25 whitespace-nowrap">
+                    NIVEL ESTIMADO
                   </span>
                 </div>
               </div>
 
-              {/* Level Scale Timeline (A1 -> C1) */}
+              {/* Level Scale Timeline (Básico -> Avanzado) */}
               <div className="w-full space-y-3 pt-4">
-                <div className="grid grid-cols-5 gap-1 relative text-center">
-                  {cefrLevels.map((lvl) => {
-                    const isCurrent = lvl.key === scoreStats.levelKey;
+                <div className="grid grid-cols-3 gap-3 relative text-center max-w-sm mx-auto">
+                  {broadLevels.map((lvl) => {
+                    const isCurrent = lvl.key === getBroadLevelGroup(scoreStats.levelKey);
                     return (
                       <div key={lvl.key} className="flex flex-col items-center">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center font-sans font-black text-xs transition-all duration-300 relative ${
+                          className={`w-11 h-11 rounded-full flex items-center justify-center font-sans font-black text-sm transition-all duration-300 relative ${
                             isCurrent
-                              ? 'bg-gradient-to-r from-[#FFC83D] to-[#E08B00] text-[#020925] border-2 border-white scale-115 shadow-[0_0_15px_rgba(255,200,61,0.5)] z-10'
+                              ? 'bg-gradient-to-r from-[#FFC83D] to-[#E08B00] text-[#020925] border-2 border-white scale-110 shadow-[0_0_15px_rgba(255,200,61,0.5)] z-10'
                               : 'bg-white/5 border border-white/5 text-slate-500'
                           }`}
                         >
-                          {lvl.key}
+                          {lvl.key[0]}
                           {isCurrent && (
                             <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#FFC83D] rotate-45" />
                           )}
                         </div>
-                        <span className={`text-[8px] font-bold mt-2 font-sans leading-none ${isCurrent ? 'text-[#00d2ff]' : 'text-slate-500'}`}>
+                        <span className={`text-[10px] font-bold mt-2 font-sans leading-none ${isCurrent ? 'text-[#00d2ff]' : 'text-slate-500'}`}>
                           {lvl.label}
                         </span>
                       </div>
@@ -371,7 +370,7 @@ export default function ReportResult({
 
             {/* Secondary WhatsApp purple button */}
             <a
-              href={`https://wa.me/51978957849?text=Hola,%20acabo%20de%20completar%20el%20test%20de%20nivelaci%C3%B3n%20en%20l%C3%ADnea.%20Obtuve%20un%20nivel%20${scoreStats.levelKey}%20estimado%20y%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n.`}
+              href={`https://wa.me/51978957849?text=${encodeURIComponent(`Hola, acabo de completar el test de nivelación en línea. Obtuve un nivel ${getBroadLevelGroup(scoreStats.levelKey)} estimado y me gustaría recibir más información.`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="py-3.5 px-6 bg-[#120b36] hover:bg-[#120b36]/80 text-white font-sans font-bold rounded-xl border border-white/15 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer text-xs text-center no-underline"
@@ -427,7 +426,7 @@ export default function ReportResult({
                           P{index + 1}
                         </span>
                         <span className="text-[10px] uppercase font-mono font-black text-slate-400 tracking-wider">
-                          Nivel {question.level} • {question.category}
+                          Grupo {getBroadLevelGroup(question.level)}
                         </span>
                       </div>
 
@@ -510,7 +509,7 @@ export default function ReportResult({
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
         initialType={bookingType}
-        estimatedLevel={scoreStats.levelKey}
+        estimatedLevel={getBroadLevelGroup(scoreStats.levelKey)}
         recommendedProgram={levelInfo.recommendedProgram.name}
       />
     </div>

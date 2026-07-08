@@ -6,7 +6,7 @@
 import { Question, LevelDetails, EnglishLevelKey } from '../types';
 
 export const DEFAULT_QUESTIONS: Question[] = [
-  // --- A1 LEVEL (Questions 1 - 13) ---
+  // --- A1 LEVEL (Questions 1 - 2) ---
   {
     id: 1,
     category: 'Grammar',
@@ -18,15 +18,6 @@ export const DEFAULT_QUESTIONS: Question[] = [
   },
   {
     id: 2,
-    category: 'Vocabulary',
-    level: 'A1',
-    text: 'The lesson starts in ten minutes. Please don\'t be ________.',
-    options: ['quick', 'happy', 'early', 'late'],
-    correctAnswer: 3, // late
-    explanation: 'If a lesson starts soon, you should arrive on time. Being "late" means arriving after the scheduled time.'
-  },
-  {
-    id: 3,
     category: 'Grammar',
     level: 'A1',
     text: 'She ________ to the gym every Tuesday evening.',
@@ -34,99 +25,9 @@ export const DEFAULT_QUESTIONS: Question[] = [
     correctAnswer: 0, // goes
     explanation: 'Using the third person singular "She" in the present simple (expressing a routine: "every Tuesday") requires adding "-es" to "go", resulting in "goes".'
   },
+  // --- A2 LEVEL (Questions 3 - 4) ---
   {
-    id: 4,
-    category: 'Grammar',
-    level: 'A1',
-    text: 'What ________ your name?',
-    options: ['is', 'are', 'am', 'be'],
-    correctAnswer: 0, // is
-    explanation: 'With the singular subject "your name" (it), we use "is" in the present simple tense.'
-  },
-  {
-    id: 5,
-    category: 'Vocabulary',
-    level: 'A1',
-    text: 'I usually have breakfast at 8:00 in the ________.',
-    options: ['evening', 'morning', 'afternoon', 'night'],
-    correctAnswer: 1, // morning
-    explanation: 'Breakfast is the first meal of the day, eaten in the morning.'
-  },
-  {
-    id: 6,
-    category: 'Grammar',
-    level: 'A1',
-    text: 'They ________ a big house near the beach.',
-    options: ['has', 'having', 'have', 'are have'],
-    correctAnswer: 2, // have
-    explanation: 'With the plural subject "They", we use "have" in the present simple tense.'
-  },
-  {
-    id: 7,
-    category: 'Vocabulary',
-    level: 'A1',
-    text: 'My father\'s brother is my ________.',
-    options: ['uncle', 'aunt', 'cousin', 'brother'],
-    correctAnswer: 0, // uncle
-    explanation: 'Your father\'s or mother\'s brother is your uncle.'
-  },
-  {
-    id: 8,
-    category: 'Grammar',
-    level: 'A1',
-    text: 'I can\'t find my keys. Where are ________?',
-    options: ['it', 'them', 'their', 'they'],
-    correctAnswer: 3, // they
-    explanation: 'We use the subject pronoun "they" to refer to a plural noun ("keys") as the subject of the clause "Where are they?"'
-  },
-  {
-    id: 9,
-    category: 'Vocabulary',
-    level: 'A1',
-    text: 'We need to buy some ________ like apples and bananas.',
-    options: ['vegetables', 'meat', 'fruit', 'bread'],
-    correctAnswer: 2, // fruit
-    explanation: 'Apples and bananas are types of fruit.'
-  },
-  {
-    id: 10,
-    category: 'Grammar',
-    level: 'A1',
-    text: 'He ________ like milk. He prefers juice.',
-    options: ['don\'t', 'doesn\'t', 'not', 'isn\'t'],
-    correctAnswer: 1, // doesn\'t
-    explanation: 'In the present simple, we use "doesn\'t" (does not) for third-person singular subjects (He/She/It) in negative sentences.'
-  },
-  {
-    id: 11,
-    category: 'Vocabulary',
-    level: 'A1',
-    text: 'It is very ________ today, so don\'t forget your umbrella.',
-    options: ['sunny', 'windy', 'rainy', 'hot'],
-    correctAnswer: 2, // rainy
-    explanation: 'We use an umbrella to protect ourselves from the rain, so the weather is rainy.'
-  },
-  {
-    id: 12,
-    category: 'Grammar',
-    level: 'A1',
-    text: 'Listen! The baby ________.',
-    options: ['cries', 'is crying', 'cry', 'crying'],
-    correctAnswer: 1, // is crying
-    explanation: 'The word "Listen!" indicates that the action is happening right now, requiring the present continuous tense ("is crying").'
-  },
-  {
-    id: 13,
-    category: 'Grammar',
-    level: 'A1',
-    text: '________ you speak English?',
-    options: ['Do', 'Does', 'Are', 'Is'],
-    correctAnswer: 0, // Do
-    explanation: 'With the subject pronoun "you", we use the auxiliary verb "Do" to form questions in the present simple.'
-  },
-  // --- A2 LEVEL (Questions 14 - 16) ---
-  {
-    id: 14,
+    id: 3,
     category: 'Grammar',
     level: 'A2',
     text: 'I\'ve decided that I am ________ a new laptop next week.',
@@ -135,7 +36,7 @@ export const DEFAULT_QUESTIONS: Question[] = [
     explanation: 'We use "be going to + verb" to express a plan or intention decided before speaking.'
   },
   {
-    id: 15,
+    id: 4,
     category: 'Vocabulary',
     level: 'A2',
     text: 'Could you please ________ me some money? I forgot my wallet at home.',
@@ -143,18 +44,9 @@ export const DEFAULT_QUESTIONS: Question[] = [
     correctAnswer: 1, // lend
     explanation: '"Lend" means to give something to someone temporarily. "Borrow" is to take something from someone temporarily.'
   },
+  // --- B1 LEVEL (Questions 5 - 6) ---
   {
-    id: 16,
-    category: 'Grammar',
-    level: 'A2',
-    text: 'We went to the park yesterday, ________ it was raining quite heavily.',
-    options: ['because', 'although', 'so', 'consequently'],
-    correctAnswer: 1, // although
-    explanation: '"Although" is used to show a contrast between two clauses (going to the park vs. heavy rain).'
-  },
-  // --- B1 LEVEL (Questions 17 - 20) ---
-  {
-    id: 17,
+    id: 5,
     category: 'Grammar',
     level: 'B1',
     text: 'If I ________ you, I would study more for the official language certification.',
@@ -163,21 +55,7 @@ export const DEFAULT_QUESTIONS: Question[] = [
     explanation: 'In the Second Conditional (giving advice with "If I..."), we use "were" instead of "was" for all subjects in standard English.'
   },
   {
-    id: 18,
-    category: 'Grammar',
-    level: 'B1',
-    text: 'Choose the grammatically correct sentence:',
-    options: [
-      'I have went to London.',
-      'I have been to London.',
-      'I have go to London.',
-      'I am been to London.'
-    ],
-    correctAnswer: 1, // I have been to London
-    explanation: 'The present perfect is formed with "have + past participle". "Been" is the correct past participle of "go/be" used here to describe a life experience.'
-  },
-  {
-    id: 19,
+    id: 6,
     category: 'Vocabulary',
     level: 'B1',
     text: 'The company\'s profits have grown ________ over the past fiscal year, surprising the executives.',
@@ -185,23 +63,9 @@ export const DEFAULT_QUESTIONS: Question[] = [
     correctAnswer: 0, // significantly
     explanation: '"Significantly" means in a sufficiently large or important way, which explains the executives being surprised by the growth.'
   },
+  // --- B2 LEVEL (Questions 7 - 8) ---
   {
-    id: 20,
-    category: 'Comprehension',
-    level: 'B1',
-    text: 'What is the closest meaning of: "I have standard working hours, so I get off at 6:00 PM"?',
-    options: [
-      'I start my job at 6:00 PM.',
-      'I am fired from my job at 6:00 PM.',
-      'I finish my work shift at 6:00 PM.',
-      'I receive my salary at 6:00 PM.'
-    ],
-    correctAnswer: 2, // I finish my work shift at 6:00 PM
-    explanation: 'The phrasal verb "get off (work)" colloquially means to finish one\'s work shift or workday.'
-  },
-  // --- B2 LEVEL (Questions 21 - 24) ---
-  {
-    id: 21,
+    id: 7,
     category: 'Grammar',
     level: 'B2',
     text: 'By the time we finally arrived at the cinema, the movie ________.',
@@ -210,25 +74,7 @@ export const DEFAULT_QUESTIONS: Question[] = [
     explanation: 'We use the Past Perfect ("had started") to talk about an action that happened before another action in the past ("arrived").'
   },
   {
-    id: 22,
-    category: 'Vocabulary',
-    level: 'B2',
-    text: 'Your current proposals are simply not ________ with our long-term structural guidelines.',
-    options: ['compatible', 'comparable', 'identical', 'combined'],
-    correctAnswer: 0, // compatible
-    explanation: '"Compatible" means able to exist, occur, or work together without conflict.'
-  },
-  {
-    id: 23,
-    category: 'Grammar',
-    level: 'B2',
-    text: 'She has been living here for many years, so she is used to ________ in the left lane.',
-    options: ['drive', 'driving', 'be driving', 'having driven'],
-    correctAnswer: 1, // driving
-    explanation: 'The phrase "be used to" (accustomed to) is followed by a gerund ("-ing" form) or a noun.'
-  },
-  {
-    id: 24,
+    id: 8,
     category: 'Comprehension',
     level: 'B2',
     text: 'Select the primary meaning of the idiom: "He decided to bite the bullet and approach his boss."',
@@ -241,9 +87,9 @@ export const DEFAULT_QUESTIONS: Question[] = [
     correctAnswer: 1, // He forced himself to do something difficult but necessary
     explanation: '"To bite the bullet" means to face a difficult situation with courage and get it over with.'
   },
-  // --- C1 LEVEL (Questions 25 - 27) ---
+  // --- C1 LEVEL (Questions 9 - 10) ---
   {
-    id: 25,
+    id: 9,
     category: 'Grammar',
     level: 'C1',
     text: 'Hardly ________ entered the lecture hall when the professor began his presentation.',
@@ -252,22 +98,13 @@ export const DEFAULT_QUESTIONS: Question[] = [
     explanation: 'When "hardly", "scarcely", or "no sooner" starts a sentence, it triggers inversion (verb before subject), needing past perfect.'
   },
   {
-    id: 26,
+    id: 10,
     category: 'Vocabulary',
     level: 'C1',
     text: 'The description of the project was so ________ that none of the engineers knew where to start.',
     options: ['articulate', 'concise', 'ambiguous', 'lucid'],
     correctAnswer: 2, // ambiguous
     explanation: '"Ambiguous" means open to more than one interpretation or having a double meaning, leading to confusion.'
-  },
-  {
-    id: 27,
-    category: 'Grammar',
-    level: 'C1',
-    text: 'We would far rather you ________ tell the board of directors about this transaction yet.',
-    options: ['don\'t', 'didn\'t', 'won\'t', 'not to'],
-    correctAnswer: 1, // didn\'t
-    explanation: 'We use "would rather + subject + past simple" to express a preference about actions in the present or future.'
   }
 ];
 
@@ -275,7 +112,7 @@ const getQuestionsFromStorage = (): Question[] => {
   if (typeof window === 'undefined') return DEFAULT_QUESTIONS;
 
   // Clear outdated storage items if version mismatch (C2 removal and thresholds shift)
-  const SCHEMA_VERSION = 'v2_c1_max_v2';
+  const SCHEMA_VERSION = 'v3_10_questions';
   const currentVersion = localStorage.getItem('bh_quiz_version');
   if (currentVersion !== SCHEMA_VERSION) {
     localStorage.removeItem('bh_quiz_questions');
@@ -363,24 +200,24 @@ export interface LevelThresholds {
 
 // Helper to get level percentage thresholds from localStorage:
 export const getLevelThresholds = (): LevelThresholds => {
-  if (typeof window === 'undefined') return { A2: 38, B1: 54, B2: 60, C1: 86 };
+  if (typeof window === 'undefined') return { A2: 20, B1: 40, B2: 65, C1: 85 };
   const stored = localStorage.getItem('bh_quiz_thresholds');
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
       if (parsed && typeof parsed === 'object') {
         return {
-          A2: typeof parsed.A2 === 'number' ? parsed.A2 : 38,
-          B1: typeof parsed.B1 === 'number' ? parsed.B1 : 54,
-          B2: typeof parsed.B2 === 'number' ? parsed.B2 : 60,
-          C1: typeof parsed.C1 === 'number' ? parsed.C1 : 86,
+          A2: typeof parsed.A2 === 'number' ? parsed.A2 : 20,
+          B1: typeof parsed.B1 === 'number' ? parsed.B1 : 40,
+          B2: typeof parsed.B2 === 'number' ? parsed.B2 : 65,
+          C1: typeof parsed.C1 === 'number' ? parsed.C1 : 85,
         };
       }
     } catch (e) {
       console.error("Failed to parse thresholds", e);
     }
   }
-  return { A2: 38, B1: 54, B2: 60, C1: 86 };
+  return { A2: 20, B1: 40, B2: 65, C1: 85 };
 };
 
 // Helper to save thresholds:
