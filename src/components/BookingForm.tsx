@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Phone, MapPin, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
 import { ConsultationForm } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface BookingFormProps {
   isOpen: boolean;
@@ -76,25 +77,54 @@ export default function BookingForm({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
 
+    const submittedAt = new Date().toISOString();
+    const leadData = {
+      email: formData.email,
+      phone: formData.phone,
+      district: formData.district,
+      preferred_contact: 'whatsapp',
+      estimated_level: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
+      recommended_program: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
+      submitted_at: submittedAt
+    };
+
+    // 1. Guardar en Supabase
+    try {
+      console.log('Intentando guardar lead en Supabase...', leadData);
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([leadData])
+        .select();
+
+      console.log('Resultado de Supabase (Insert):', { data, error });
+
+      if (error) {
+        console.error('Error saving lead to Supabase:', error);
+      }
+    } catch (err) {
+      console.error('Failed to save lead to Supabase:', err);
+    }
+
+    // 2. Guardar en localStorage como respaldo local
     try {
       const stored = localStorage.getItem('bh_quiz_leads');
       const leads = stored ? JSON.parse(stored) : [];
-      const newLead = {
+      const localLead = {
         email: formData.email,
         phone: formData.phone,
         district: formData.district,
         preferredContact: 'whatsapp',
         estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
         recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
-        submittedAt: new Date().toISOString()
+        submittedAt: submittedAt
       };
-      leads.push(newLead);
+      leads.push(localLead);
       localStorage.setItem('bh_quiz_leads', JSON.stringify(leads));
 
       // Push data to Google Tag Manager dataLayer
@@ -107,23 +137,21 @@ export default function BookingForm({
       });
       (window as any).dataLayer = dl;
     } catch (err) {
-      console.error('Failed to save lead info', err);
+      console.error('Failed to save lead info locally', err);
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      if (isPreQuiz) {
-        if (onSubmitSuccess) {
-          onSubmitSuccess({
-            email: formData.email,
-            phone: formData.phone,
-            district: formData.district
-          });
-        }
-      } else {
-        setIsSubmitted(true);
+    setIsSubmitting(false);
+    if (isPreQuiz) {
+      if (onSubmitSuccess) {
+        onSubmitSuccess({
+          email: formData.email,
+          phone: formData.phone,
+          district: formData.district
+        });
       }
-    }, 1100);
+    } else {
+      setIsSubmitted(true);
+    }
   };
 
   return (

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights, getLevelThresholds, saveLevelThresholds, LevelThresholds, DEFAULT_QUESTIONS } from '../data/questions';
 import { Question } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface ConfigPanelProps {
   onBack: () => void;
@@ -90,12 +91,48 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   };
 
   // Leads list state & actions
-  const [leadsList, setLeadsList] = useState<any[]>(() => {
-    if (typeof window === 'undefined') return [];
-    const stored = localStorage.getItem('bh_quiz_leads');
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [leadsList, setLeadsList] = useState<any[]>([]);
   const [isLeadsCardOpen, setIsLeadsCardOpen] = useState(false);
+  const [isLoadingLeads, setIsLoadingLeads] = useState(false);
+
+  const fetchLeads = async () => {
+    setIsLoadingLeads(true);
+    try {
+      console.log('Intentando obtener leads desde Supabase...');
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+
+      console.log('Resultado de Supabase (Select):', { data, error });
+
+      if (error) {
+        console.error('Error fetching leads from Supabase:', error);
+      } else if (data) {
+        const mappedLeads = data.map((lead: any) => ({
+          id: lead.id,
+          email: lead.email,
+          phone: lead.phone,
+          district: lead.district,
+          preferredContact: lead.preferred_contact,
+          estimatedLevel: lead.estimated_level,
+          recommendedProgram: lead.recommended_program,
+          submittedAt: lead.submitted_at
+        }));
+        setLeadsList(mappedLeads);
+      }
+    } catch (err) {
+      console.error('Failed to fetch leads:', err);
+    } finally {
+      setIsLoadingLeads(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      fetchLeads();
+    }
+  }, [isAuthenticated]);
 
   const downloadLeadsCSV = () => {
     if (leadsList.length === 0) {
@@ -127,10 +164,27 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     document.body.removeChild(link);
   };
 
-  const handleClearLeads = () => {
-    if (window.confirm('¿Está seguro de que desea eliminar todo el registro de leads? Esta acción no se puede deshacer.')) {
-      localStorage.removeItem('bh_quiz_leads');
-      setLeadsList([]);
+  const handleClearLeads = async () => {
+    if (window.confirm('¿Está seguro de que desea eliminar todo el registro de leads de la base de datos? Esta acción no se puede deshacer.')) {
+      try {
+        const { error } = await supabase
+          .from('leads')
+          .delete()
+          .neq('id', 0);
+
+        if (error) {
+          console.error('Error clearing leads from Supabase:', error);
+          alert('Hubo un error al eliminar los registros de Supabase. Asegúrese de tener la política de eliminación pública configurada.');
+          return;
+        }
+
+        localStorage.removeItem('bh_quiz_leads');
+        setLeadsList([]);
+        alert('Historial eliminado correctamente.');
+      } catch (err) {
+        console.error('Failed to clear leads:', err);
+        alert('Ocurrió un error inesperado al intentar borrar los registros.');
+      }
     }
   };
 
@@ -625,9 +679,17 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                 </div>
               </div>
 
-              {leadsList.length === 0 ? (
+              {isLoadingLeads ? (
+                <div className="text-center py-8 text-white/60 text-xs border border-dashed border-white/10 rounded-xl bg-black/10 flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-[#00B5F7]" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  <span>Cargando registros desde la base de datos...</span>
+                </div>
+              ) : leadsList.length === 0 ? (
                 <div className="text-center py-8 text-white/40 text-xs border border-dashed border-white/10 rounded-xl bg-black/10">
-                  No hay contactos registrados todavía en este dispositivo.
+                  No hay contactos registrados todavía en la base de datos.
                 </div>
               ) : (
                 <div className="overflow-x-auto border border-white/10 rounded-xl bg-black/10">
