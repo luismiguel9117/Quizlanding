@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Phone, MapPin, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
 import { ConsultationForm } from '../types';
-import { supabase } from '../lib/supabase';
 
 interface BookingFormProps {
   isOpen: boolean;
@@ -173,24 +172,7 @@ export default function BookingForm({
       submitted_at: submittedAt
     };
 
-    // 2. Guardar en Supabase
-    try {
-      console.log('Intentando guardar lead en Supabase...', leadData);
-      const { data, error } = await supabase
-        .from('leads')
-        .insert([leadData])
-        .select();
-
-      console.log('Resultado de Supabase (Insert):', { data, error });
-
-      if (error) {
-        console.error('Error saving lead to Supabase:', error);
-      }
-    } catch (err) {
-      console.error('Failed to save lead to Supabase:', err);
-    }
-
-    // 3. Guardar en localStorage como respaldo local
+    // 2. Guardar en localStorage como respaldo local
     try {
       const stored = localStorage.getItem('bh_quiz_leads');
       const leads = stored ? JSON.parse(stored) : [];

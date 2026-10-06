@@ -6,12 +6,12 @@ Plataforma web interactiva para evaluación y diagnóstico del nivel de inglés 
 
 ## 🚀 Características
 - **Diagnóstico Integral:** 20 preguntas dinámicas calibradas por nivel (A1 a C1) y categoría (Grammar, Vocabulary, Comprehension).
-- **Formulario de Registro de Leads:** Captura de datos previo a la evaluación, con sincronización a Supabase y respaldo automático en `localStorage`.
+- **Formulario de Registro de Leads:** Captura de datos previo a la evaluación, con entrega automática a webhook de **Zapier** (Kommo CRM) y respaldo en `localStorage`.
+- **Casilla de Alumno British:** Detección de estudiantes activos o antiguos en el formulario.
 - **Panel Administrativo (`/config`):**
   - Gestión y edición de preguntas.
   - Ajuste de ponderaciones y umbrales de nivel.
-  - Visualización y descarga de leads en formato CSV.
-- **Modo Offline Resiliente:** Si las variables de Supabase no están presentes, la aplicación continúa funcionando y registrando datos localmente.
+  - Visualización y descarga de leads en formato Excel (CSV).
 
 ---
 
@@ -20,7 +20,7 @@ Plataforma web interactiva para evaluación y diagnóstico del nivel de inglés 
 - **Bundler:** Vite
 - **Estilos:** Tailwind CSS
 - **Iconografía:** Lucide React
-- **Base de Datos:** Supabase (opcional con respaldo local)
+- **Integración:** Webhook Zapier + Google Tag Manager dataLayer
 
 ---
 

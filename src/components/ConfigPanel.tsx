@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { QUESTIONS, saveQuestions, resetQuestions, getLevelWeights, saveLevelWeights, getLevelThresholds, saveLevelThresholds, LevelThresholds, DEFAULT_QUESTIONS } from '../data/questions';
 import { Question } from '../types';
-import { supabase } from '../lib/supabase';
 
 interface ConfigPanelProps {
   onBack: () => void;
@@ -95,41 +94,34 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
   const [isLeadsCardOpen, setIsLeadsCardOpen] = useState(false);
   const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
-  const fetchLeads = async () => {
+  const fetchLeads = () => {
     setIsLoadingLeads(true);
     try {
-      console.log('Intentando obtener leads desde Supabase...');
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .order('submitted_at', { ascending: false });
-
-      console.log('Resultado de Supabase (Select):', { data, error });
-
-      if (error) {
-        console.error('Error fetching leads from Supabase:', error);
-      } else if (data) {
-        const mappedLeads = data.map((lead: any) => ({
-          id: lead.id,
-          email: lead.email,
-          phone: lead.phone,
-          district: lead.district,
-          preferredContact: lead.preferred_contact,
-          estimatedLevel: lead.estimated_level,
-          recommendedProgram: lead.recommended_program,
-          isBritishStudent: lead.is_british_student ?? lead.isBritishStudent ?? false,
-          submittedAt: lead.submitted_at
-        }));
-        setLeadsList(mappedLeads);
-      }
-    } catch (err) {
-      console.error('Failed to fetch leads from Supabase, loading localStorage fallback:', err);
       const stored = localStorage.getItem('bh_quiz_leads');
       if (stored) {
-        try {
-          setLeadsList(JSON.parse(stored));
-        } catch (_) {}
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          const mappedLeads = parsed.map((lead: any, idx: number) => ({
+            id: lead.id || idx + 1,
+            email: lead.email,
+            phone: lead.phone,
+            district: lead.district,
+            preferredContact: lead.preferredContact || 'whatsapp',
+            estimatedLevel: lead.estimatedLevel,
+            recommendedProgram: lead.recommendedProgram,
+            isBritishStudent: lead.isBritishStudent ?? false,
+            submittedAt: lead.submittedAt
+          }));
+          setLeadsList(mappedLeads);
+        } else {
+          setLeadsList([]);
+        }
+      } else {
+        setLeadsList([]);
       }
+    } catch (err) {
+      console.error('Failed to load leads from localStorage:', err);
+      setLeadsList([]);
     } finally {
       setIsLoadingLeads(false);
     }
@@ -172,27 +164,11 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
     document.body.removeChild(link);
   };
 
-  const handleClearLeads = async () => {
-    if (window.confirm('¿Está seguro de que desea eliminar todo el registro de leads de la base de datos? Esta acción no se puede deshacer.')) {
-      try {
-        const { error } = await supabase
-          .from('leads')
-          .delete()
-          .neq('id', 0);
-
-        if (error) {
-          console.error('Error clearing leads from Supabase:', error);
-          alert('Hubo un error al eliminar los registros de Supabase. Asegúrese de tener la política de eliminación pública configurada.');
-          return;
-        }
-
-        localStorage.removeItem('bh_quiz_leads');
-        setLeadsList([]);
-        alert('Historial eliminado correctamente.');
-      } catch (err) {
-        console.error('Failed to clear leads:', err);
-        alert('Ocurrió un error inesperado al intentar borrar los registros.');
-      }
+  const handleClearLeads = () => {
+    if (window.confirm('¿Está seguro de que desea eliminar el registro de leads? Esta acción no se puede deshacer.')) {
+      localStorage.removeItem('bh_quiz_leads');
+      setLeadsList([]);
+      alert('Historial eliminado correctamente.');
     }
   };
 
