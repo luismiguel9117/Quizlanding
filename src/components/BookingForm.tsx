@@ -119,7 +119,7 @@ export default function BookingForm({
       fecha: submittedAt,
     };
 
-    const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/28895886/4mx41g4/";
+    const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/28895886/4mxszku/";
     const bodyJson = JSON.stringify(zapierPayload);
 
     // 1. Envío único a Zapier (Formulario dinámico a iframe - formato oficial ManyaLanding)
