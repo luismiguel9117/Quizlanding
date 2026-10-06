@@ -117,12 +117,19 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
           preferredContact: lead.preferred_contact,
           estimatedLevel: lead.estimated_level,
           recommendedProgram: lead.recommended_program,
+          isBritishStudent: lead.is_british_student ?? lead.isBritishStudent ?? false,
           submittedAt: lead.submitted_at
         }));
         setLeadsList(mappedLeads);
       }
     } catch (err) {
-      console.error('Failed to fetch leads:', err);
+      console.error('Failed to fetch leads from Supabase, loading localStorage fallback:', err);
+      const stored = localStorage.getItem('bh_quiz_leads');
+      if (stored) {
+        try {
+          setLeadsList(JSON.parse(stored));
+        } catch (_) {}
+      }
     } finally {
       setIsLoadingLeads(false);
     }
@@ -140,14 +147,15 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       return;
     }
     let csvContent = '\uFEFF'; // UTF-8 BOM
-    csvContent += 'Distrito,Correo Electrónico,Celular,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
+    csvContent += 'Distrito,Correo Electrónico,Celular,Alumno British,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
     leadsList.forEach((lead: any) => {
       const row = [
         `"${(lead.district || lead.fullName || '').replace(/"/g, '""')}"`,
         `"${(lead.email || '').replace(/"/g, '""')}"`,
         `"${(lead.phone || '').replace(/"/g, '""')}"`,
-        `"${lead.preferredContact}"`,
-        `"${lead.estimatedLevel}"`,
+        `"${lead.isBritishStudent ? 'Sí' : 'No'}"`,
+        `"${lead.preferredContact || 'whatsapp'}"`,
+        `"${lead.estimatedLevel || ''}"`,
         `"${(lead.recommendedProgram || '').replace(/"/g, '""')}"`,
         `"${new Date(lead.submittedAt).toLocaleString()}"`
       ];
@@ -706,7 +714,14 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                     <tbody className="divide-y divide-white/5">
                       {leadsList.map((lead: any, idx: number) => (
                         <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-3 px-4 font-bold text-white">{lead.district || lead.fullName || 'No especificado'}</td>
+                          <td className="py-3 px-4 font-bold text-white">
+                            <div>{lead.district || lead.fullName || 'No especificado'}</div>
+                            {lead.isBritishStudent ? (
+                              <span className="inline-block mt-1 text-[9px] bg-[#FFC83D]/20 text-[#FFC83D] border border-[#FFC83D]/30 px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
+                                ★ Alumno British
+                              </span>
+                            ) : null}
+                          </td>
                           <td className="py-3 px-4 text-white/80 space-y-0.5">
                             <div className="flex items-center gap-1.5">
                               <span className="text-white/40">Cel:</span>

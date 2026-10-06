@@ -35,4 +35,5 @@ export interface ConsultationForm {
   district: string;
   preferredContact: 'whatsapp' | 'email' | 'phone';
   termsAccepted: boolean;
+  isBritishStudent?: boolean;
 }

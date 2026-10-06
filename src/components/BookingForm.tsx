@@ -16,7 +16,7 @@ interface BookingFormProps {
   estimatedLevel?: string;
   recommendedProgram?: string;
   isPreQuiz?: boolean;
-  onSubmitSuccess?: (data: { email: string; phone: string; district: string }) => void;
+  onSubmitSuccess?: (data: { email: string; phone: string; district: string; isBritishStudent?: boolean }) => void;
 }
 
 export default function BookingForm({
@@ -34,6 +34,7 @@ export default function BookingForm({
     district: '',
     preferredContact: 'whatsapp',
     termsAccepted: true,
+    isBritishStudent: false,
   });
   const [errors, setErrors] = useState<Partial<ConsultationForm>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,6 +92,7 @@ export default function BookingForm({
       preferred_contact: 'whatsapp',
       estimated_level: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
       recommended_program: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
+      is_british_student: formData.isBritishStudent || false,
       submitted_at: submittedAt
     };
 
@@ -122,6 +124,7 @@ export default function BookingForm({
         preferredContact: 'whatsapp',
         estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
         recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
+        isBritishStudent: formData.isBritishStudent || false,
         submittedAt: submittedAt
       };
       leads.push(localLead);
@@ -133,7 +136,8 @@ export default function BookingForm({
         event: 'lead_form_submitted',
         estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
         recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
-        preferredContact: 'whatsapp'
+        preferredContact: 'whatsapp',
+        isBritishStudent: formData.isBritishStudent || false
       });
       (window as any).dataLayer = dl;
     } catch (err) {
@@ -146,7 +150,8 @@ export default function BookingForm({
         onSubmitSuccess({
           email: formData.email,
           phone: formData.phone,
-          district: formData.district
+          district: formData.district,
+          isBritishStudent: formData.isBritishStudent
         });
       }
     } else {
@@ -352,6 +357,32 @@ export default function BookingForm({
                       {errors.district && (
                         <p className="text-red-505 text-xs mt-1 font-bold">{errors.district}</p>
                       )}
+                    </div>
+
+                    {/* Marcable "¿Eres alumno British?" */}
+                    <div className="pt-0.5">
+                      <label 
+                        htmlFor="is-british-student-checkbox"
+                        className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl cursor-pointer transition-all select-none group"
+                      >
+                        <input
+                          id="is-british-student-checkbox"
+                          type="checkbox"
+                          checked={formData.isBritishStudent || false}
+                          onChange={(e) => {
+                            setFormData({ ...formData, isBritishStudent: e.target.checked });
+                          }}
+                          className="w-4.5 h-4.5 rounded text-[#0A2E9E] accent-[#0A2E9E] border-slate-300 focus:ring-slate-200 cursor-pointer"
+                        />
+                        <div className="flex flex-col text-left">
+                          <span className="text-xs font-bold text-slate-800 group-hover:text-[#0A2E9E] transition-colors">
+                            ¿Eres alumno British?
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            Marca esta casilla si actualmente eres estudiante de British House
+                          </span>
+                        </div>
+                      </label>
                     </div>
 
                     {/* Terms & Conditions Box */}
