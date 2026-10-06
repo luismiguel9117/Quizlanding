@@ -79,6 +79,7 @@ export default function BookingForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!validate()) return;
 
     setIsSubmitting(true);
@@ -111,15 +112,8 @@ export default function BookingForm({
     const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/28895886/4mx41g4/";
     const bodyJson = JSON.stringify(zapierPayload);
 
-    // 1. Envío a Zapier (Copia exacta de ManyaLanding: Iframe + Formulario dinámico + Fetch no-cors)
+    // 1. Envío único a Zapier (Formulario dinámico a iframe - formato oficial ManyaLanding)
     try {
-      fetch(zapierWebhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: bodyJson,
-        mode: "no-cors",
-      }).catch((err) => console.warn("Zapier fetch warning:", err));
-
       if (typeof document !== "undefined") {
         const iframeName = `zapier_submit_iframe_${Date.now()}`;
         const iframe = document.createElement("iframe");
