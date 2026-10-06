@@ -85,9 +85,86 @@ export default function BookingForm({
     setIsSubmitting(true);
 
     const submittedAt = new Date().toISOString();
+    
+    // Formateo de celular con prefijo internacional idéntico a ManyaLanding
+    const rawDigits = formData.phone.replace(/[^0-9]/g, "");
+    const phoneFormatted =
+      rawDigits.indexOf("51") === 0 ? `+${rawDigits}` : `+51${rawDigits}`;
+
+    // Payload adaptado al formato de entrega de ManyaLanding para Zapier / Kommo
+    const zapierPayload = {
+      correo: formData.email.trim(),
+      email: formData.email.trim(),
+      numero: phoneFormatted,
+      phone: phoneFormatted,
+      distrito: formData.district.trim(),
+      district: formData.district.trim(),
+      alumno_british: formData.isBritishStudent ? "Sí" : "No",
+      es_alumno_british: formData.isBritishStudent ? "Sí" : "No",
+      nivel_estimado: isPreQuiz ? "PRE-QUIZ" : estimatedLevel,
+      programa_recomendado: isPreQuiz ? "PRE-QUIZ" : recommendedProgram,
+      tipo_registro: isPreQuiz ? "Pre-Quiz (Inicio)" : "Asesoría Final",
+      metodo_contacto: "whatsapp",
+      origen: "British House - Quiz Landing",
+      fecha: submittedAt,
+    };
+
+    const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/28895886/4mx41g4/";
+    const bodyJson = JSON.stringify(zapierPayload);
+
+    // 1. Envío a Zapier (Copia exacta de ManyaLanding: Iframe + Formulario dinámico + Fetch no-cors)
+    try {
+      fetch(zapierWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: bodyJson,
+        mode: "no-cors",
+      }).catch((err) => console.warn("Zapier fetch warning:", err));
+
+      if (typeof document !== "undefined") {
+        const iframeName = `zapier_submit_iframe_${Date.now()}`;
+        const iframe = document.createElement("iframe");
+        iframe.name = iframeName;
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+
+        const zapForm = document.createElement("form");
+        zapForm.method = "POST";
+        zapForm.action = zapierWebhookUrl;
+        zapForm.target = iframeName;
+        zapForm.style.display = "none";
+
+        Object.entries(zapierPayload).forEach(([key, val]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = String(val);
+          zapForm.appendChild(input);
+        });
+
+        const rawInput = document.createElement("input");
+        rawInput.type = "hidden";
+        rawInput.name = "raw_body";
+        rawInput.value = bodyJson;
+        zapForm.appendChild(rawInput);
+
+        document.body.appendChild(zapForm);
+        zapForm.submit();
+
+        setTimeout(() => {
+          try {
+            document.body.removeChild(zapForm);
+            document.body.removeChild(iframe);
+          } catch (_) {}
+        }, 3000);
+      }
+    } catch (err) {
+      console.warn("Zapier submit fallback:", err);
+    }
+
     const leadData = {
       email: formData.email,
-      phone: formData.phone,
+      phone: phoneFormatted,
       district: formData.district,
       preferred_contact: 'whatsapp',
       estimated_level: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
@@ -96,7 +173,7 @@ export default function BookingForm({
       submitted_at: submittedAt
     };
 
-    // 1. Guardar en Supabase
+    // 2. Guardar en Supabase
     try {
       console.log('Intentando guardar lead en Supabase...', leadData);
       const { data, error } = await supabase
@@ -113,7 +190,7 @@ export default function BookingForm({
       console.error('Failed to save lead to Supabase:', err);
     }
 
-    // 2. Guardar en localStorage como respaldo local
+    // 3. Guardar en localStorage como respaldo local
     try {
       const stored = localStorage.getItem('bh_quiz_leads');
       const leads = stored ? JSON.parse(stored) : [];
