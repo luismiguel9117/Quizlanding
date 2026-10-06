@@ -1,20 +1,44 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# British House International - Test de Nivelación de Inglés (Quiz)
 
-# Run and deploy your AI Studio app
+Plataforma web interactiva para evaluación y diagnóstico del nivel de inglés (A1 - C1) según el estándar del Marco Común Europeo de Referencia (MCER) para **British House International**.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/69720ef4-489a-44e2-9510-5a1160476dc0
+## 🚀 Características
+- **Diagnóstico Integral:** 20 preguntas dinámicas calibradas por nivel (A1 a C1) y categoría (Grammar, Vocabulary, Comprehension).
+- **Formulario de Registro de Leads:** Captura de datos previo a la evaluación, con sincronización a Supabase y respaldo automático en `localStorage`.
+- **Panel Administrativo (`/config`):**
+  - Gestión y edición de preguntas.
+  - Ajuste de ponderaciones y umbrales de nivel.
+  - Visualización y descarga de leads en formato CSV.
+- **Modo Offline Resiliente:** Si las variables de Supabase no están presentes, la aplicación continúa funcionando y registrando datos localmente.
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## 🛠️ Tecnologías
+- **Framework:** React 19 + TypeScript
+- **Bundler:** Vite
+- **Estilos:** Tailwind CSS
+- **Iconografía:** Lucide React
+- **Base de Datos:** Supabase (opcional con respaldo local)
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 💻 Desarrollo Local
+
+```bash
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
+npm run dev
+
+# Compilar para producción
+npm run build
+```
+
+---
+
+## 🌐 Despliegue en Producción
+Alojado en **Vercel** bajo el subdominio:
+`https://quiz.britishhouseinternational.pe`
