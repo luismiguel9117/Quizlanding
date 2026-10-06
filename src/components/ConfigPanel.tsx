@@ -103,6 +103,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
         if (Array.isArray(parsed)) {
           const mappedLeads = parsed.map((lead: any, idx: number) => ({
             id: lead.id || idx + 1,
+            fullName: lead.fullName || lead.name || '',
             email: lead.email,
             phone: lead.phone,
             district: lead.district,
@@ -139,10 +140,11 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
       return;
     }
     let csvContent = '\uFEFF'; // UTF-8 BOM
-    csvContent += 'Distrito,Correo Electrónico,Celular,Alumno British,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
+    csvContent += 'Nombre,Distrito,Correo Electrónico,Celular,Alumno British,Método de Contacto,Nivel Estimado,Programa Recomendado,Fecha de Envío\n';
     leadsList.forEach((lead: any) => {
       const row = [
-        `"${(lead.district || lead.fullName || '').replace(/"/g, '""')}"`,
+        `"${(lead.fullName || lead.name || '').replace(/"/g, '""')}"`,
+        `"${(lead.district || '').replace(/"/g, '""')}"`,
         `"${(lead.email || '').replace(/"/g, '""')}"`,
         `"${(lead.phone || '').replace(/"/g, '""')}"`,
         `"${lead.isBritishStudent ? 'Sí' : 'No'}"`,
@@ -680,7 +682,7 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                   <table className="w-full text-left border-collapse text-[10px] sm:text-xs">
                     <thead>
                       <tr className="border-b border-white/10 text-white/50 uppercase font-black tracking-wider bg-white/[0.02]">
-                        <th className="py-2.5 px-4">Distrito</th>
+                        <th className="py-2.5 px-4">Nombre / Distrito</th>
                         <th className="py-2.5 px-4">Contacto</th>
                         <th className="py-2.5 px-4 text-center">Nivel</th>
                         <th className="py-2.5 px-4">Programa Recomendado</th>
@@ -691,7 +693,8 @@ export default function ConfigPanel({ onBack }: ConfigPanelProps) {
                       {leadsList.map((lead: any, idx: number) => (
                         <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
                           <td className="py-3 px-4 font-bold text-white">
-                            <div>{lead.district || lead.fullName || 'No especificado'}</div>
+                            <div className="text-white text-xs font-extrabold">{lead.fullName || lead.name || 'Sin nombre'}</div>
+                            <div className="text-[10px] text-white/50 font-normal">{lead.district || 'Distrito no especificado'}</div>
                             {lead.isBritishStudent ? (
                               <span className="inline-block mt-1 text-[9px] bg-[#FFC83D]/20 text-[#FFC83D] border border-[#FFC83D]/30 px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
                                 ★ Alumno British

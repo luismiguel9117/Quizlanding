@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Send, CheckCircle2, X, ShieldCheck } from 'lucide-react';
 import { ConsultationForm } from '../types';
 
 interface BookingFormProps {
@@ -15,7 +15,7 @@ interface BookingFormProps {
   estimatedLevel?: string;
   recommendedProgram?: string;
   isPreQuiz?: boolean;
-  onSubmitSuccess?: (data: { email: string; phone: string; district: string; isBritishStudent?: boolean }) => void;
+  onSubmitSuccess?: (data: { fullName?: string; email: string; phone: string; district: string; isBritishStudent?: boolean }) => void;
 }
 
 export default function BookingForm({
@@ -28,6 +28,7 @@ export default function BookingForm({
   onSubmitSuccess,
 }: BookingFormProps) {
   const [formData, setFormData] = useState<ConsultationForm>({
+    fullName: '',
     email: '',
     phone: '',
     district: '',
@@ -49,6 +50,12 @@ export default function BookingForm({
   const validate = () => {
     const newErrors: Partial<ConsultationForm> = {};
     
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Por favor, ingresa tu nombre.';
+    } else if (formData.fullName.trim().length < 3) {
+      newErrors.fullName = 'Ingresa un nombre válido (mínimo 3 caracteres).';
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
       newErrors.email = 'Por favor, ingresa tu correo electrónico.';
@@ -93,6 +100,9 @@ export default function BookingForm({
 
     // Payload adaptado al formato de entrega de ManyaLanding para Zapier / Kommo
     const zapierPayload = {
+      nombre: formData.fullName.trim(),
+      nombre_contacto: formData.fullName.trim(),
+      name: formData.fullName.trim(),
       correo: formData.email.trim(),
       email: formData.email.trim(),
       numero: phoneFormatted,
@@ -156,6 +166,8 @@ export default function BookingForm({
     }
 
     const leadData = {
+      fullName: formData.fullName.trim(),
+      name: formData.fullName.trim(),
       email: formData.email,
       phone: phoneFormatted,
       district: formData.district,
@@ -171,6 +183,8 @@ export default function BookingForm({
       const stored = localStorage.getItem('bh_quiz_leads');
       const leads = stored ? JSON.parse(stored) : [];
       const localLead = {
+        fullName: formData.fullName.trim(),
+        name: formData.fullName.trim(),
         email: formData.email,
         phone: formData.phone,
         district: formData.district,
@@ -187,6 +201,7 @@ export default function BookingForm({
       const dl = (window as any).dataLayer || [];
       dl.push({
         event: 'lead_form_submitted',
+        leadName: formData.fullName.trim(),
         estimatedLevel: isPreQuiz ? 'PRE-QUIZ' : estimatedLevel,
         recommendedProgram: isPreQuiz ? 'PRE-QUIZ' : recommendedProgram,
         preferredContact: 'whatsapp',
@@ -201,6 +216,7 @@ export default function BookingForm({
     if (isPreQuiz) {
       if (onSubmitSuccess) {
         onSubmitSuccess({
+          fullName: formData.fullName.trim(),
           email: formData.email,
           phone: formData.phone,
           district: formData.district,
@@ -335,6 +351,31 @@ export default function BookingForm({
                         </span>
                       </div>
                     )}
+
+                    {/* Nombre */}
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-500 mb-1.5 uppercase tracking-widest">
+                        Nombre
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+                        <input
+                          type="text"
+                          value={formData.fullName}
+                          onChange={(e) => {
+                            setFormData({ ...formData, fullName: e.target.value });
+                            if (errors.fullName) setErrors({ ...errors, fullName: '' });
+                          }}
+                          placeholder="Ej. Juan Pérez"
+                          className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border ${
+                            errors.fullName ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-slate-400'
+                          } text-slate-900 placeholder-slate-400 text-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-100/50 transition-all`}
+                        />
+                      </div>
+                      {errors.fullName && (
+                        <p className="text-red-505 text-xs mt-1 font-bold">{errors.fullName}</p>
+                      )}
+                    </div>
 
                     {/* Correo Electrónico */}
                     <div>
