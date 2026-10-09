@@ -165,6 +165,19 @@ export default function BookingForm({
       console.warn("Zapier submit fallback:", err);
     }
 
+    // 2. Envío paralelo a Google Sheets (Excel)
+    const googleSheetsUrl = "https://script.google.com/macros/s/AKfycbyS67HN6YCuhBfI0hhlgj9n9wBBL8z1vEuA9aNephKEl_QzkCE1yxg_liUPbFaAdbP3/exec";
+    try {
+      fetch(googleSheetsUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(zapierPayload),
+        mode: "no-cors",
+      }).catch((err) => console.warn("Google Sheets fetch error:", err));
+    } catch (err) {
+      console.warn("Google Sheets fallback error:", err);
+    }
+
     const leadData = {
       fullName: formData.fullName.trim(),
       name: formData.fullName.trim(),
@@ -178,7 +191,7 @@ export default function BookingForm({
       submitted_at: submittedAt
     };
 
-    // 2. Guardar en localStorage como respaldo local
+    // 3. Guardar en localStorage como respaldo local
     try {
       const stored = localStorage.getItem('bh_quiz_leads');
       const leads = stored ? JSON.parse(stored) : [];
